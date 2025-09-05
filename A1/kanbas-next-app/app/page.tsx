@@ -3,8 +3,8 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main style={{ padding: 24 }}>
-      <h1>Kanbas (Kambaz)</h1>
-      <p>CS4550 • Fall 2025</p>
+      <h1>Kanbas</h1>
+      <p>Diego Cicotoste - CS4550 - Fall 2025</p>
 
       <nav style={{ display: "grid", gap: 8, marginTop: 16 }}>
         <Link href="/kanbas/signin">Signin</Link>
@@ -12,9 +12,8 @@ export default function Home() {
         <Link href="/kanbas/profile">Profile</Link>
         <Link href="/kanbas/dashboard">Dashboard</Link>
         <Link href="/kanbas/courses">Courses</Link>
-        <Link href="/kanbas/modules">Modules</Link>
-        <Link href="/kanbas/assignments">Assignments</Link>
-        <Link href="/labs" style={{ marginTop: 16, fontWeight: 700 }}>
+
+        <Link href="/labs/lab1" style={{ marginTop: 16, fontWeight: 700 }}>
           ➜ Go to Lab 1 (Exercises + Links + GitHub)
         </Link>
       </nav>
