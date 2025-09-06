@@ -7,13 +7,13 @@ export default function Home() {
       <p>Diego Cicotoste - CS4550 - Fall 2025</p>
 
       <nav style={{ display: "grid", gap: 8, marginTop: 16 }}>
-        <Link href="/kanbas/signin">Signin</Link>
-        <Link href="/kanbas/signup">Signup</Link>
-        <Link href="/kanbas/profile">Profile</Link>
-        <Link href="/kanbas/dashboard">Dashboard</Link>
-        <Link href="/kanbas/courses">Courses</Link>
+        <Link href="/Kanbas/signin">Signin</Link>
+        <Link href="/Kanbas/signup">Signup</Link>
+        <Link href="/Kanbas/profile">Profile</Link>
+        <Link href="/Kanbas/dashboard">Dashboard</Link>
+        <Link href="/Kanbas/courses">Courses</Link>
 
-        <Link href="/labs/lab1" style={{ marginTop: 16, fontWeight: 700 }}>
+        <Link href="/Labs/" style={{ marginTop: 16, fontWeight: 700 }}>
           ➜ Go to Lab 1 (Exercises + Links + GitHub)
         </Link>
       </nav>
