@@ -128,7 +128,7 @@
     <br />
     <Image
     id="wd-teslabot"
-    src="/labs/lab1/Unknown.png" 
+    src="/Labs/Lab1/Unknown.png" 
     alt="Teslabot image"
     width={200}
     height={200}
