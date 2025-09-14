@@ -20,6 +20,16 @@ export default function Labs() {
        <Link href="/Kambaz" id="wd-lab3-link">
          Kambaz </Link> 
          </li>
+         <li>
+          <a
+            href="https://github.com/DiegoCico/CS4550/tree/main/A1/kanbas-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Github
+          </a>
+        </li>
+
      </ul>
    </div>
 );}

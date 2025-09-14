@@ -2,10 +2,6 @@ import Link from "next/link";
 export default function TOC() {
  return (
    <ul>
-    <li>
-       <Link href="/" id="wd-lab1-link">
-         Back To Landing Page</Link>
-     </li>
      <li>
        <Link href="/Labs" id="wd-lab1-link">
          Home </Link>
@@ -22,5 +18,19 @@ export default function TOC() {
        <Link href="/Labs/Lab3" id="wd-lab3-link">
          Lab 3 </Link>
      </li>
+
+     <li>
+       <Link href="/Kambaz" id="wd-lab3-link">
+         Kambaz </Link> 
+         </li>
+     
+     <li>
+        <a
+          href="https://github.com/DiegoCico/CS4550/tree/main/A1/kanbas-next-app"
+          target="_blank">
+          Github
+        </a>
+      </li>
+
    </ul>
 );}

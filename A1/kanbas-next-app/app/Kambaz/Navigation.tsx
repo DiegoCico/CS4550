@@ -3,7 +3,7 @@ export default function KambazNavigation() {
   return (
     <div id="wd-kambaz-navigation">
       <a href="https://www.northeastern.edu/" id="wd-neu-link" target="_blank">Northeastern</a><br/>
-      <Link href="/Account" id="wd-account-link">Account</Link><br/>
+      <Link href="/Kambaz/Account/Profile" id="wd-account-link">Account</Link><br/>
       <Link href="/Kambaz/Dashboard" id="wd-dashboard-link">Dashboard</Link><br/>
       <Link href="/Kambaz/Dashboard" id="wd-course-link">Courses</Link><br/>
       <Link href="/Calendar" id="wd-calendar-link">Calendar</Link><br/>

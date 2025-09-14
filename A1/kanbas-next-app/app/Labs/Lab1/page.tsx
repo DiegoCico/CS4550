@@ -5,6 +5,10 @@
     return (
       <div id="wd-lab1">
         <h2>Lab 1</h2>
+
+        <h2>Name: Diego Cicotoste</h2>
+        <h2>Section Number: 01</h2>
+
         <h3>HTML Examples</h3>
         <div id="wd-h-tag">
           <h4>Heading Tags</h4>
@@ -77,38 +81,37 @@
   </div>
 
   <div id="wd-tables">
-          <h4>Table Tag</h4>
-          <table border={1} width="100%">
-            <thead>
-              <tr>
-                <th>Quiz</th>
-                <th>Topic</th>
-                <th>Date</th>
-                <th>Grade</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Q1</td>
-                <td>HTML</td>
-                <td>2/3/21</td>
-                <td>85</td>
-              </tr>
-              <tr>
-                <td>Q2</td>
-                <td>CSS</td>
-                <td>2/10/21</td>
-                <td>90</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colSpan={3}>Average</td>
-                <td>90</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+  <h4>Table Tag</h4>
+  <table border={1} width="100%">
+    <thead>
+      <tr>
+        <th>Quiz</th>
+        <th>Topic</th>
+        <th>Date</th>
+        <th>Grade</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Q1</td><td>HTML</td><td>2025-09-01</td><td>85</td></tr>
+      <tr><td>Q2</td><td>CSS</td><td>2025-09-03</td><td>90</td></tr>
+      <tr><td>Q3</td><td>Flexbox</td><td>2025-09-05</td><td>88</td></tr>
+      <tr><td>Q4</td><td>Grid</td><td>2025-09-06</td><td>92</td></tr>
+      <tr><td>Q5</td><td>Forms</td><td>2025-09-07</td><td>87</td></tr>
+      <tr><td>Q6</td><td>Tables</td><td>2025-09-08</td><td>91</td></tr>
+      <tr><td>Q7</td><td>Images</td><td>2025-09-09</td><td>89</td></tr>
+      <tr><td>Q8</td><td>Semantics</td><td>2025-09-10</td><td>93</td></tr>
+      <tr><td>Q9</td><td>Links</td><td>2025-09-11</td><td>86</td></tr>
+      <tr><td>Q10</td><td>Deploy</td><td>2025-09-12</td><td>94</td></tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colSpan={3}>Average</td>
+        <td>89.5</td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
 
         <div id="wd-images">
     <h4>Image tag</h4>
@@ -154,6 +157,9 @@
           id="wd-all-good">
     Hello World!
   </button>
+
+  <h5 id="wd-file-upload">File upload</h5>
+<input type="file" id="wd-input-file" />
 
       <h5>Text boxes</h5>
   <label>Biography:</label><br/>
@@ -216,24 +222,28 @@
 <input type="email"
        placeholder="jdoe@somewhere.com"
        id="wd-text-fields-email"/><br/>
+<label htmlFor="wd-text-fields-salary-start">Starting salary:</label>
+<input
+  type="number"
+  defaultValue="100000"
+  placeholder="1000"
+  id="wd-text-fields-salary-start"
+/><br/>
 
-<label htmlFor="wd-text-fields-salary-start"> Starting salary:</label>
-<input type="number"
-       value="100000"
-       placeholder="1000"
-       id="wd-text-fields-salary-start"/><br/>
+<label htmlFor="wd-text-fields-rating">Rating:</label>
+<input
+  type="range"
+  defaultValue="4"
+  max="5"
+  id="wd-text-fields-rating"
+/><br/>
 
-<label htmlFor="wd-text-fields-rating"> Rating: </label>
-<input type="range"
-       value="4"
-       max="5"
-       placeholder="Doe"
-       id="wd-text-fields-rating"/><br/>
-
-<label htmlFor="wd-text-fields-dob"> Date of birth: </label>
-<input type="date"
-       value="2000-01-21"
-       id="wd-text-fields-dob"/><br/>
+<label htmlFor="wd-text-fields-dob">Date of birth:</label>
+<input
+  type="date"
+  defaultValue="2000-01-21"
+  id="wd-text-fields-dob"
+/><br/>
 
   <h4>Anchor tag</h4>
   Please
