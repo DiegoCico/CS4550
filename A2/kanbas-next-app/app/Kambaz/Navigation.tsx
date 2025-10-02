@@ -10,7 +10,7 @@ export default function KambazNavigation() {
     <ListGroup
       id="wd-kambaz-navigation"
       className="rounded-0 position-fixed bottom-0 top-0 d-none d-md-block bg-black z-2"
-      style={{ width: 120 }}
+      style={{ width: 110 }}
     >
       <ListGroupItem
         className="bg-black border-0 text-center"
@@ -63,7 +63,7 @@ export default function KambazNavigation() {
           id="wd-course-link"
           className="text-white text-decoration-none"
         >
-          <LiaBookSolid className="fs-1 text-white" />
+          <LiaBookSolid className="fs-1 text-danger" />
           <br />
           Courses
         </Link>
@@ -77,7 +77,7 @@ export default function KambazNavigation() {
           id="wd-calendar-link"
           className="text-white text-decoration-none"
         >
-          <IoCalendarOutline className="fs-1 text-white" />
+          <IoCalendarOutline className="fs-1 text-danger" />
           <br />
           Calendar
         </Link>
@@ -91,7 +91,7 @@ export default function KambazNavigation() {
           id="wd-inbox-link"
           className="text-white text-decoration-none"
         >
-          <FaInbox className="fs-1 text-white" />
+          <FaInbox className="fs-1 text-danger" />
           <br />
           Inbox
         </Link>
@@ -105,7 +105,7 @@ export default function KambazNavigation() {
           id="wd-labs-link"
           className="text-white text-decoration-none"
         >
-          <LiaCogSolid className="fs-1 text-white" />
+          <LiaCogSolid className="fs-1 text-danger" />
           <br />
           Labs
         </Link>
