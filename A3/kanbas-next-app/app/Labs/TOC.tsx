@@ -1,50 +1,67 @@
 "use client";
-
-import { Nav } from "react-bootstrap";
+import { Nav, NavItem, NavLink } from "react-bootstrap";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function TOC() {
+  const pathname = usePathname();
   return (
     <Nav variant="pills">
-      <Nav.Item>
-        <Nav.Link as={Link} href="/Labs" id="wd-home-link">
+      <NavItem>
+        <NavLink
+          href="/Labs"
+          as={Link}
+          className={`nav-link ${pathname.endsWith("Labs") ? "active" : ""}`}
+        >
           Labs
-        </Nav.Link>
-      </Nav.Item>
+        </NavLink>
+      </NavItem>
 
-      <Nav.Item>
-        <Nav.Link as={Link} href="/Labs/Lab1" id="wd-lab1-link">
+      <NavItem>
+        <NavLink
+          href="/Labs/Lab1"
+          as={Link}
+          className={`nav-link ${pathname.endsWith("Lab1") ? "active" : ""}`}
+        >
           Lab 1
-        </Nav.Link>
-      </Nav.Item>
+        </NavLink>
+      </NavItem>
 
-      <Nav.Item>
-        <Nav.Link as={Link} href="/Labs/Lab2" id="wd-lab2-link">
+      <NavItem>
+        <NavLink
+          href="/Labs/Lab2"
+          as={Link}
+          className={`nav-link ${pathname.endsWith("Lab2") ? "active" : ""}`}
+        >
           Lab 2
-        </Nav.Link>
-      </Nav.Item>
+        </NavLink>
+      </NavItem>
 
-      <Nav.Item>
-        <Nav.Link as={Link} href="/Labs/Lab3" id="wd-lab3-link">
+      <NavItem>
+        <NavLink
+          href="/Labs/Lab3"
+          as={Link}
+          className={`nav-link ${pathname.endsWith("Lab3") ? "active" : ""}`}
+        >
           Lab 3
-        </Nav.Link>
-      </Nav.Item>
+        </NavLink>
+      </NavItem>
 
-      <Nav.Item>
-        <Nav.Link as={Link} href="/Kambaz" id="wd-kambaz-link">
+      <NavItem>
+        <NavLink href="/Kambaz" as={Link}>
           Kambaz
-        </Nav.Link>
-      </Nav.Item>
+        </NavLink>
+      </NavItem>
 
-      <Nav.Item>
-        <Nav.Link
-          href="https://github.com/DiegoCico/CS4550/tree/main/A2/kanbas-next-app"
+      <NavItem>
+        <NavLink
+          href="https://github.com/DiegoCico/CS4550/tree/main/A3/kanbas-next-app"
           target="_blank"
           rel="noopener noreferrer"
         >
           Github
-        </Nav.Link>
-      </Nav.Item>
+        </NavLink>
+      </NavItem>
     </Nav>
   );
 }
