@@ -14,9 +14,17 @@ import {
   BsPlusLg,
   BsSearch,
 } from "react-icons/bs";
+import { useParams } from "next/navigation";
+import * as db from "../../../Database";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 
 export default function Assignments() {
+  const { cid } = useParams();
+  const courseId = Array.isArray(cid) ? cid[0] : cid;
+
+  const assignments =
+    (db as any).assignments?.filter((a: any) => a.course === courseId) ?? [];
+
   return (
     <div id="wd-assignments">
       <div className="clearfix">
@@ -70,115 +78,43 @@ export default function Assignments() {
           </div>
 
           <ListGroup className="rounded-0">
-            {/* A1 */}
-            <ListGroupItem className="p-3 ps-2 d-flex align-items-start justify-content-between">
-              <div className="d-flex align-items-start">
-                <BsGripVertical className="me-2 fs-3 text-secondary" />
-                <div>
-                  <Link
-                    href="/Kambaz/Courses/1234/Assignments/123"
-                    className="fw-bold text-decoration-underline text-primary"
-                  >
-                    A1 - ENV + HTML
-                  </Link>
-                  <div className="text-muted small">
-                    Multiple Modules | <b>Not available until</b> May 6 at 12:00am | <b>Due</b> May 13 at 11:59pm | 100 pts
+            {assignments.map((a: any) => (
+              <ListGroupItem
+                key={a._id}
+                className="p-3 ps-2 d-flex align-items-start justify-content-between"
+              >
+                <div className="d-flex align-items-start">
+                  <BsGripVertical className="me-2 fs-3 text-secondary" />
+                  <div>
+                    <Link
+                      href={`/Kambaz/Courses/${courseId}/Assignments/${a._id}`}
+                      className="fw-bold text-decoration-underline text-primary"
+                    >
+                      {a.title}
+                    </Link>
+                    <div className="text-muted small">
+                      Multiple Modules |{" "}
+                      {a.availableFrom && (
+                        <>
+                          <b>Not available until</b> {a.availableFrom} |{" "}
+                        </>
+                      )}
+                      <b>Due</b> {a.due} | {a.points} pts
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="d-flex align-items-center">
-                <GreenCheckmark />
-                <BsThreeDotsVertical />
-              </div>
-            </ListGroupItem>
+                <div className="d-flex align-items-center">
+                  <GreenCheckmark />
+                  <BsThreeDotsVertical />
+                </div>
+              </ListGroupItem>
+            ))}
 
-            {/* A2 */}
-            <ListGroupItem className="p-3 ps-2 d-flex align-items-start justify-content-between">
-              <div className="d-flex align-items-start">
-                <BsGripVertical className="me-2 fs-3 text-secondary" />
-                <div>
-                  <Link
-                    href="/Kambaz/Courses/1234/Assignments/124"
-                    className="fw-bold text-decoration-underline text-primary"
-                  >
-                    A2 - CSS + BOOTSTRAP
-                  </Link>
-                  <div className="text-muted small">
-                    Multiple Modules | <b>Not available until</b> May 13 at 12:00am | <b>Due</b> May 20 at 11:59pm | 100 pts
-                  </div>
-                </div>
-              </div>
-              <div className="d-flex align-items-center">
-                <GreenCheckmark />
-                <BsThreeDotsVertical />
-              </div>
-            </ListGroupItem>
-
-            {/* A3 */}
-            <ListGroupItem className="p-3 ps-2 d-flex align-items-start justify-content-between">
-              <div className="d-flex align-items-start">
-                <BsGripVertical className="me-2 fs-3 text-secondary" />
-                <div>
-                  <Link
-                    href="/Kambaz/Courses/1234/Assignments/125"
-                    className="fw-bold text-decoration-underline text-primary"
-                  >
-                    A3 - JAVASCRIPT + REACT
-                  </Link>
-                  <div className="text-muted small">
-                    Multiple Modules | <b>Not available until</b> May 20 at 12:00am | <b>Due</b> May 27 at 11:59pm | 100 pts
-                  </div>
-                </div>
-              </div>
-              <div className="d-flex align-items-center">
-                <GreenCheckmark />
-                <BsThreeDotsVertical />
-              </div>
-            </ListGroupItem>
-
-            {/* A4 */}
-            <ListGroupItem className="p-3 ps-2 d-flex align-items-start justify-content-between">
-              <div className="d-flex align-items-start">
-                <BsGripVertical className="me-2 fs-3 text-secondary" />
-                <div>
-                  <Link
-                    href="/Kambaz/Courses/1234/Assignments/126"
-                    className="fw-bold text-decoration-underline text-primary"
-                  >
-                    A4 - NODE + EXPRESS
-                  </Link>
-                  <div className="text-muted small">
-                    Multiple Modules | <b>Not available until</b> May 27 at 12:00am | <b>Due</b> April 4 at 11:59pm | 100 pts
-                  </div>
-                </div>
-              </div>
-              <div className="d-flex align-items-center">
-                <GreenCheckmark />
-                <BsThreeDotsVertical />
-              </div>
-            </ListGroupItem>
-
-            {/* A5 */}
-            <ListGroupItem className="p-3 ps-2 d-flex align-items-start justify-content-between">
-              <div className="d-flex align-items-start">
-                <BsGripVertical className="me-2 fs-3 text-secondary" />
-                <div>
-                  <Link
-                    href="/Kambaz/Courses/1234/Assignments/127"
-                    className="fw-bold text-decoration-underline text-primary"
-                  >
-                    A5 - MONGO + MONGOOSE
-                  </Link>
-                  <div className="text-muted small">
-                    Multiple Modules | <b>Not available until</b> April 11 at 12:00am | <b>Due</b> May 18 at 11:59pm | 100 pts
-                  </div>
-                </div>
-              </div>
-              <div className="d-flex align-items-center">
-                <GreenCheckmark />
-                <BsThreeDotsVertical />
-              </div>
-            </ListGroupItem>
+            {assignments.length === 0 && (
+              <ListGroupItem className="text-muted">
+                No assignments for this course.
+              </ListGroupItem>
+            )}
           </ListGroup>
         </ListGroupItem>
       </ListGroup>
