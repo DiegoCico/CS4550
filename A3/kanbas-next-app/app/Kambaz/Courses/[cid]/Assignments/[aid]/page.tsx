@@ -5,15 +5,34 @@ import Link from "next/link";
 import { Form, Row, Col, Card, Button } from "react-bootstrap";
 import * as db from "../../../../Database";
 
-export default function AssignmentEditor() {
-  const { cid, aid } = useParams();
-  const courseId = Array.isArray(cid) ? cid[0] : cid;
-  const assignmentId = Array.isArray(aid) ? aid[0] : aid;
+type Assignment = {
+  _id: string;
+  course: string;
+  title: string;
+  description?: string;
+  points?: number;
+  group?: "assignments" | "quizzes" | "exams" | "projects";
+  submissionType?: "online" | "on-paper" | "external-tool";
+  dueDate?: string;
+  due?: string;
+  dueTime?: string;
+  availableFrom?: string;
+  availableFromTime?: string;
+  availableUntil?: string;
+  availableUntilTime?: string;
+};
 
-  const assignment =
-    (db as any).assignments?.find(
-      (a: any) => a._id === assignmentId && a.course === courseId
-    );
+export default function AssignmentEditor() {
+  const { cid: courseId, aid: assignmentId } = useParams<{
+    cid: string;
+    aid: string;
+  }>();
+
+  const assignments = (db as { assignments?: Assignment[] }).assignments ?? [];
+
+  const assignment = assignments.find(
+    (a) => a._id === assignmentId && a.course === courseId
+  );
 
   if (!assignment) {
     return <div className="text-danger">Assignment not found.</div>;
@@ -172,13 +191,20 @@ export default function AssignmentEditor() {
         </Row>
 
         <div className="d-flex justify-content-end gap-2">
-          <Button as={Link} href={`/Kambaz/Courses/${courseId}/Assignments`} variant="secondary">
-            Cancel
-          </Button>
-          <Button as={Link} href={`/Kambaz/Courses/${courseId}/Assignments`} variant="danger">
-            Save
-          </Button>
-        </div>
+  <Link
+    href={`/Kambaz/Courses/${courseId}/Assignments`}
+    className="btn btn-secondary"
+  >
+    Cancel
+  </Link>
+  <Link
+    href={`/Kambaz/Courses/${courseId}/Assignments`}
+    className="btn btn-danger"
+  >
+    Save
+  </Link>
+</div>
+
       </Form>
     </div>
   );
