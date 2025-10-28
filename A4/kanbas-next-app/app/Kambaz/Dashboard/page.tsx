@@ -25,6 +25,15 @@ export default function Dashboard() {
     description: "New Description",
   });
 
+  if (!currentUser) {
+    return (
+      <div>
+        <h2>Please Signin to access the Dashboard</h2>
+        <Link href="/Kambaz/Account/Signin">Signin</Link>
+      </div>
+    );
+  }
+
   return (
     <div id="wd-dashboard" style={{ marginLeft: 140 }}>
       <h1 id="wd-dashboard-title">Dashboard</h1>

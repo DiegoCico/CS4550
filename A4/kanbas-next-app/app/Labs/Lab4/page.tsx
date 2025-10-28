@@ -13,9 +13,9 @@ import ParentStateComponent from "./ParentStateComponent";
 import ReduxExamples from "./ReduxExamples/page";
 import store from "./store";
 import { Provider } from "react-redux";
-import HelloRedux from "./ReduxExamples/HelloRedux/page";
-import CounterRedux from "./ReduxExamples/CounterRedux/page";
-import AddRedux from "./ReduxExamples/AddRedux/page";
+import HelloRedux from "./ReduxExamples/HelloRedux";
+import CounterRedux from "./ReduxExamples/CounterRedux";
+import AddRedux from "./ReduxExamples/AddRedux";
 
 export default function Lab4() {
   function sayHello() {

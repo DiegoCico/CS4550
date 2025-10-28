@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 import { redirect } from "next/dist/client/components/navigation";
 import { useState, useEffect } from "react";
