@@ -1,34 +1,28 @@
+"use client";
 import { ReactNode } from "react";
-import { FaAlignJustify } from "react-icons/fa6";
-import { courses } from "../../Database";
 import CourseNavigation from "./Navigation";
-import Breadcrumb from "./Breadcrumb";
-
-export default async function CoursesLayout({
-  children,
-  params,
-}: {
-  children: ReactNode;
-  params: Promise<{ cid: string }>;
-}) {
-  const { cid } = await params;
-  const course = courses.find((c) => c._id === cid);
-
-  return (
-    <div id="wd-courses" className="p-3">
-      <h2 className="d-flex align-items-center gap-2 m-0">
-        <FaAlignJustify className="text-danger fs-5" />
-        <Breadcrumb course={course} />
-      </h2>
-
-      <hr className="mt-3" />
-
-      <div className="d-flex">
-        <div className="d-none d-md-block">
-          <CourseNavigation cid={cid} />
-        </div>
-        <div className="flex-fill ps-3">{children}</div>
-      </div>
-    </div>
-  );
+import { useSelector } from "react-redux";
+import { useParams } from "next/navigation";
+import { FaAlignJustify } from "react-icons/fa6";
+export default function CoursesLayout({ children }: { children: ReactNode }) {
+ const params = useParams();
+ const rawCid = params?.cid;
+ const cid = Array.isArray(rawCid) ? rawCid[0] : (rawCid ?? "");
+ const { courses } = useSelector((state: any) => state.coursesReducer);
+ const course = courses.find((course: any) => course._id === cid);
+ return (
+   <div id="wd-courses">
+     <h2>
+       <FaAlignJustify className="me-4 fs-4 mb-1" />
+       {course?.name}
+     </h2>
+     <hr />
+     <div className="d-flex">
+       <div>
+         <CourseNavigation cid={cid} />
+                </div>
+       <div className="flex-fill">{children}</div>
+     </div>
+   </div>
+ );
 }

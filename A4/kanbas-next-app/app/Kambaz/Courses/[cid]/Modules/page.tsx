@@ -1,32 +1,18 @@
 "use client";
 
-import { ListGroup, ListGroupItem } from "react-bootstrap";
-import {
-  BsGripVertical,
-  BsThreeDotsVertical,
-  BsCheckCircleFill,
-  BsPlusLg,
-} from "react-icons/bs";
+import { FormControl, ListGroup, ListGroupItem } from "react-bootstrap";
+import { BsGripVertical } from "react-icons/bs";
 import { useParams } from "next/navigation";
-import * as db from "../../../Database";
 import ModulesControls from "./ModulesControls";
-
-// Small inline controls to match your original UI
-function ModuleControlButtons() {
-  return (
-    <div className="d-flex align-items-center">
-      <BsCheckCircleFill className="text-success me-3" />
-      <BsPlusLg className="me-3" />
-      <BsThreeDotsVertical />
-    </div>
-  );
-}
+import ModuleControlButtons from "./ModuleControlButtons";
+import { addModule, editModule, updateModule, deleteModule } from "./reducer";
+import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
 
 function LessonControlButtons() {
   return (
     <div className="d-flex align-items-center">
-      <BsCheckCircleFill className="text-success me-3" />
-      <BsThreeDotsVertical />
+      <BsGripVertical className="text-success me-3" />
     </div>
   );
 }
@@ -34,15 +20,22 @@ function LessonControlButtons() {
 export default function Modules() {
   const { cid } = useParams();
   const courseId = Array.isArray(cid) ? cid[0] : cid;
-  const modules = db.modules;
+  const [moduleName, setModuleName] = useState("");
+
+  const modules = useSelector((state: any) => state.modulesReducer.modules);
+  const dispatch = useDispatch();
 
   return (
     <div>
-      <ModulesControls />
-      <br />
-      <br />
-      <br />
-      <br />
+      <ModulesControls
+        moduleName={moduleName}
+        setModuleName={setModuleName}
+        addModule={() => {
+          dispatch(addModule({ name: moduleName, course: courseId }));
+          setModuleName("");
+        }}
+      />
+      <br /><br /><br /><br />
 
       <ListGroup id="wd-modules" className="rounded-0">
         {modules
@@ -55,9 +48,29 @@ export default function Modules() {
               <div className="wd-title p-3 ps-2 bg-secondary d-flex align-items-center justify-content-between">
                 <div className="d-flex align-items-center">
                   <BsGripVertical className="me-2 fs-3" />
-                  {module.name}
+                  {!module.editing && module.name}
+
+                  {module.editing && (
+                    <FormControl
+                      className="w-50 d-inline-block"
+                      onChange={(e) =>
+                        dispatch(updateModule({ ...module, name: e.target.value }))
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          dispatch(updateModule({ ...module, editing: false }));
+                        }
+                      }}
+                      defaultValue={module.name}
+                    />
+                  )}
                 </div>
-                <ModuleControlButtons />
+
+                <ModuleControlButtons
+                  moduleId={module._id}
+                  deleteModule={(id: string) => dispatch(deleteModule(id))}
+                  editModule={(id: string) => dispatch(editModule(id))}
+                />
               </div>
 
               {module.lessons && (

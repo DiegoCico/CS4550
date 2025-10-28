@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ListGroup, ListGroupItem, Button } from "react-bootstrap";
-import { addTodo, deleteTodo } from "./todosReducer";
+import { addTodo, deleteTodo } from "./ReduxExamples/todos/todosReducer";
 
 export default function ArrayStateVariable() {
   const { todos } = useSelector((state: any) => state.todosReducer);
