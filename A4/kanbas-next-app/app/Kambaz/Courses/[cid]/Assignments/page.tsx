@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import {
   ListGroup,
@@ -7,23 +6,36 @@ import {
   InputGroup,
   Form,
   Button,
+  Modal,
 } from "react-bootstrap";
 import {
   BsGripVertical,
   BsThreeDotsVertical,
   BsPlusLg,
   BsSearch,
+  BsTrash,
 } from "react-icons/bs";
-import { useParams } from "next/navigation";
-import * as db from "../../../Database";
+import { useParams, useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteAssignment } from "./reducer";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 
 export default function Assignments() {
   const { cid } = useParams();
+  const router = useRouter();
+  const dispatch = useDispatch();
   const courseId = Array.isArray(cid) ? cid[0] : cid;
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
 
-  const assignments =
-    (db as any).assignments?.filter((a: any) => a.course === courseId) ?? [];
+  const courseAssignments = assignments.filter(
+    (a: any) => a.course === courseId
+  );
+
+  const handleDelete = (id: string) => {
+    if (confirm("Are you sure you want to delete this assignment?")) {
+      dispatch(deleteAssignment(id));
+    }
+  };
 
   return (
     <div id="wd-assignments">
@@ -45,8 +57,11 @@ export default function Assignments() {
           variant="danger"
           size="lg"
           className="me-1 float-end"
+          onClick={() =>
+            router.push(`/Kambaz/Courses/${courseId}/Assignments/new`)
+          }
         >
-          <BsPlusLg className="position-relative me-2" style={{ bottom: "1px" }} />
+          <BsPlusLg className="me-2" />
           Assignment
         </Button>
         <Button
@@ -55,20 +70,18 @@ export default function Assignments() {
           size="lg"
           className="float-end me-2"
         >
-          <BsPlusLg className="position-relative me-2" style={{ bottom: "1px" }} />
+          <BsPlusLg className="me-2" />
           Group
         </Button>
       </div>
 
-      <br /><br /><br /><br />
-
-      <ListGroup className="rounded-0">
+      <br />
+      <ListGroup className="rounded-0 mt-4">
         <ListGroupItem className="p-0 mb-4 fs-5 border-gray">
           <div className="p-3 ps-2 bg-secondary d-flex align-items-center justify-content-between border-start border-4 border-success">
             <div className="d-flex align-items-center">
               <BsGripVertical className="me-2 fs-3" />
               <span className="fw-bold">ASSIGNMENTS</span>
-              <span className="ms-2">40% of Total</span>
             </div>
             <div className="d-flex align-items-center">
               <GreenCheckmark />
@@ -78,7 +91,7 @@ export default function Assignments() {
           </div>
 
           <ListGroup className="rounded-0">
-            {assignments.map((a: any) => (
+            {courseAssignments.map((a: any) => (
               <ListGroupItem
                 key={a._id}
                 className="p-3 ps-2 d-flex align-items-start justify-content-between"
@@ -93,7 +106,6 @@ export default function Assignments() {
                       {a.title}
                     </Link>
                     <div className="text-muted small">
-                      Multiple Modules |{" "}
                       {a.availableFrom && (
                         <>
                           <b>Not available until</b> {a.availableFrom} |{" "}
@@ -104,13 +116,18 @@ export default function Assignments() {
                   </div>
                 </div>
                 <div className="d-flex align-items-center">
-                  <GreenCheckmark />
-                  <BsThreeDotsVertical />
+                  <Button
+                    variant="link"
+                    className="text-danger p-0"
+                    onClick={() => handleDelete(a._id)}
+                  >
+                    <BsTrash />
+                  </Button>
                 </div>
               </ListGroupItem>
             ))}
 
-            {assignments.length === 0 && (
+            {courseAssignments.length === 0 && (
               <ListGroupItem className="text-muted">
                 No assignments for this course.
               </ListGroupItem>
