@@ -2,9 +2,14 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Form, Row, Col, Card, Button } from "react-bootstrap";
+import { Form, Row, Col, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { addAssignment, updateAssignment } from "./reducer";
+import { setAssignments } from "./reducer";
+import {
+  createAssignmentForCourse,
+  updateAssignment as updateAssignmentAPI,
+  findAssignmentsForCourse,
+} from "../../client";
 import { useState, useEffect } from "react";
 
 export default function AssignmentEditor() {
@@ -36,12 +41,15 @@ export default function AssignmentEditor() {
     setAssignment({ ...assignment, [field]: value });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (existing) {
-      dispatch(updateAssignment(assignment));
+      await updateAssignmentAPI(assignment);
     } else {
-      dispatch(addAssignment(assignment));
+      await createAssignmentForCourse(courseId, assignment);
     }
+
+    const updated = await findAssignmentsForCourse(courseId);
+    dispatch(setAssignments(updated));
     router.push(`/Kambaz/Courses/${courseId}/Assignments`);
   };
 

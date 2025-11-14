@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
 import { Button, FormControl } from "react-bootstrap";
+import * as client from "../client";
+
 
 export default function Profile() {
   const [profile, setProfile] = useState<any>({});
@@ -13,6 +15,11 @@ export default function Profile() {
   const router = useRouter();
 
   const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const updateProfile = async () => {
+    const updatedProfile = await client.updateUser(profile);
+    dispatch(setCurrentUser(updatedProfile));
+  };
+
 
   useEffect(() => {
     const savedUser = localStorage.getItem("currentUser");
@@ -36,7 +43,8 @@ export default function Profile() {
     alert("Profile updated successfully!");
   };
 
-  const signout = () => {
+  const signout = async () => {
+    await client.signout();
     dispatch(setCurrentUser(null));
     localStorage.removeItem("currentUser");
     router.push("/Kambaz/Account/Signin");
@@ -113,6 +121,7 @@ export default function Profile() {
         >
           Save Changes
         </Button>
+        <button onClick={updateProfile} className="btn btn-primary w-100 mb-2"> Update </button>
         <Button
           variant="danger"
           className="w-100"

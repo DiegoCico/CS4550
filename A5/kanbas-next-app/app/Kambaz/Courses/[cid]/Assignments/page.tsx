@@ -6,7 +6,6 @@ import {
   InputGroup,
   Form,
   Button,
-  Modal,
 } from "react-bootstrap";
 import {
   BsGripVertical,
@@ -17,24 +16,42 @@ import {
 } from "react-icons/bs";
 import { useParams, useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteAssignment } from "./reducer";
+
+import {
+  findAssignmentsForCourse,
+  deleteAssignment as deleteAssignmentAPI,
+} from "../../client";
+
+import { setAssignments, deleteAssignment } from "./reducer";
 import GreenCheckmark from "../Modules/GreenCheckmark";
+import { useEffect } from "react";
 
 export default function Assignments() {
   const { cid } = useParams();
   const router = useRouter();
   const dispatch = useDispatch();
+
   const courseId = Array.isArray(cid) ? cid[0] : cid;
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+
+  // Load from SERVER on page load
+  useEffect(() => {
+    if (courseId) {
+      findAssignmentsForCourse(courseId).then((data) => {
+        dispatch(setAssignments(data));
+      });
+    }
+  }, [courseId, dispatch]);
 
   const courseAssignments = assignments.filter(
     (a: any) => a.course === courseId
   );
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this assignment?")) {
-      dispatch(deleteAssignment(id));
-    }
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this assignment?")) return;
+
+    await deleteAssignmentAPI(id);
+    dispatch(deleteAssignment(id));
   };
 
   return (
