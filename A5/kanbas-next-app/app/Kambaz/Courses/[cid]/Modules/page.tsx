@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 
 import { FormControl, ListGroup, ListGroupItem } from "react-bootstrap";
