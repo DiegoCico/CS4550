@@ -16,6 +16,14 @@ import mongoose from "mongoose";
 
 const CONNECTION_STRING = process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz"
 mongoose.connect(CONNECTION_STRING);
+
+mongoose.connection.on("connected", () => {
+  console.log("MongoDB connected:", CONNECTION_STRING);
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error("MongoDB connection error:", err);
+});
 const app = express();
 
 app.use(
