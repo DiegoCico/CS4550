@@ -118,14 +118,12 @@ export default function Dashboard() {
 
 const handleEnroll = async (courseId: string) => {
   await enrollInCourse(userId, courseId);
-
   const updated = await findEnrollmentsForUser(userId);
   dispatch(setEnrollments(updated));
 };
 
 const handleUnenroll = async (courseId: string) => {
   await unenrollFromCourse(userId, courseId);
-
   const updated = await findEnrollmentsForUser(userId);
   dispatch(setEnrollments(updated));
 };

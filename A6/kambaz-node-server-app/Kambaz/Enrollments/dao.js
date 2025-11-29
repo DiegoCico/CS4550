@@ -11,18 +11,17 @@ export default function EnrollmentsDao(db) {
 
 
  function enrollUserInCourse(userId, courseId) {
-   return model.create({
-     user: userId,
-     course: courseId,
-     _id: `${userId}-${courseId}`,
-   });
-   // const { enrollments } = db;
-   // enrollments.push({
-   //   _id: uuidv4(),
-      //   user: userId,
-   //   course: courseId,
-   // });
- }
+  return model.create({
+    user: userId,
+    course: courseId,
+    _id: `${userId}-${courseId}`,
+  });
+}
+function unenrollUserFromCourse(user, course) {
+  return model.deleteOne({ user, course });
+}
+
+
  function unenrollUserFromCourse(user, course) {
    return model.deleteOne({ user, course });
  }
