@@ -105,8 +105,7 @@ const fetchCourses = async () => {
 
   const userId = currentUser._id;
   const userRole = currentUser.role;
-  const userEnrollments = enrollments.filter((e: any) => e.user === userId);
-  const enrolledCourseIds = userEnrollments.map((e: any) => e.course);
+  const enrolledCourseIds = enrollments.map((c: any) => c._id);
 
   const visibleCourses = showAllCourses
     ? courses
@@ -272,7 +271,7 @@ const handleUnenroll = async (courseId: string) => {
                         variant="outline-danger"
                         onClick={(e) => {
                           e.preventDefault();
-                          onDeleteCourse(course._id);
+                          onDeleteCourse(c._id);
                         }}
                       >
                         Delete

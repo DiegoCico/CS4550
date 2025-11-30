@@ -15,7 +15,7 @@ export default function CourseNavigation({ cid }: { cid: string }) {
     { label: "Assignments", path: "Assignments" },
     { label: "Quizzes", path: "Quizzes" },
     { label: "Grades", path: "Grades" },
-    { label: "People", path: "People/Table" },
+    { label: "People", path: "People" },
   ];
 
   return (

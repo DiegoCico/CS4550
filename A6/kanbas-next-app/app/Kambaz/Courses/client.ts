@@ -7,6 +7,11 @@ const MODULES_API = `${HTTP_SERVER}/api/modules`;
 const ASSIGNMENTS_API = `${HTTP_SERVER}/api/assignments`;
 const ENROLLMENTS_API = `${HTTP_SERVER}/api/users`;
 
+export const findUsersForCourse = async (courseId: string) => {
+ const response = await axios.get(`${COURSES_API}/${courseId}/users`);
+ return response.data;
+};
+
 export const enrollInCourse = async (userId: string, courseId: string) => {
   const { data } = await axiosWithCredentials.post(
     `${USERS_API}/${userId}/courses/${courseId}`
