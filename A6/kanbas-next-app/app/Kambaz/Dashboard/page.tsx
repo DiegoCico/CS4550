@@ -45,14 +45,13 @@ export default function Dashboard() {
     (state: any) => state.enrollmentsReducer
   );
 
-  const fetchCourses = async () => {
-    try {
-      const courses = await client.findMyCourses();
-      dispatch(setCourses(courses));
-    } catch (error) {
-      console.error(error);
-    }
-  };
+const fetchCourses = async () => {
+  const all = await client.fetchAllCourses();          
+  const mine = await client.findMyCourses();         
+
+  dispatch(setCourses(all));          
+  dispatch(setEnrollments(mine));  
+};
 
   useEffect(() => {
     fetchCourses();
