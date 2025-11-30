@@ -1,22 +1,25 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Form, Row, Col, Button } from "react-bootstrap";
-import { useSelector, useDispatch } from "react-redux";
-import { setAssignments } from "./reducer";
+
 import {
   createAssignmentForCourse,
-  updateAssignment as updateAssignmentAPI,
+  updateAssignment,
   findAssignmentsForCourse,
 } from "../../client";
-import { useState, useEffect } from "react";
+
+import { setAssignments } from "./reducer";
 
 export default function AssignmentEditor() {
   const { cid: courseId, aid: assignmentId } = useParams<{
     cid: string;
     aid: string;
   }>();
+
   const router = useRouter();
   const dispatch = useDispatch();
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
@@ -37,25 +40,43 @@ export default function AssignmentEditor() {
     }
   );
 
+  useEffect(() => {
+    if (!existing && assignmentId !== "new") {
+      findAssignmentsForCourse(courseId).then((data) => {
+        dispatch(setAssignments(data));
+
+        const found = data.find(
+          (a: any) => a._id === assignmentId && a.course === courseId
+        );
+
+        if (found) {
+          setAssignment(found);
+        }
+      });
+    }
+  }, []);
+
   const handleChange = (field: string, value: any) => {
     setAssignment({ ...assignment, [field]: value });
   };
 
   const handleSave = async () => {
     if (existing) {
-      await updateAssignmentAPI(assignment);
+      await updateAssignment(assignment);
     } else {
       await createAssignmentForCourse(courseId, assignment);
     }
 
     const updated = await findAssignmentsForCourse(courseId);
     dispatch(setAssignments(updated));
+
     router.push(`/Kambaz/Courses/${courseId}/Assignments`);
   };
 
   return (
     <div id="wd-assignments-editor" className="w-100">
       <Form>
+
         <Form.Group className="mb-3">
           <Form.Label className="fw-semibold">Assignment Name</Form.Label>
           <Form.Control
@@ -110,7 +131,9 @@ export default function AssignmentEditor() {
             <Form.Control
               type="date"
               value={assignment.availableFrom}
-              onChange={(e) => handleChange("availableFrom", e.target.value)}
+              onChange={(e) =>
+                handleChange("availableFrom", e.target.value)
+              }
               style={{ maxWidth: 200 }}
             />
           </Col>
@@ -124,7 +147,9 @@ export default function AssignmentEditor() {
             <Form.Control
               type="date"
               value={assignment.availableUntil}
-              onChange={(e) => handleChange("availableUntil", e.target.value)}
+              onChange={(e) =>
+                handleChange("availableUntil", e.target.value)
+              }
               style={{ maxWidth: 200 }}
             />
           </Col>
@@ -139,10 +164,12 @@ export default function AssignmentEditor() {
           >
             Cancel
           </Button>
+
           <Button variant="danger" onClick={handleSave}>
             Save
           </Button>
         </div>
+
       </Form>
     </div>
   );
