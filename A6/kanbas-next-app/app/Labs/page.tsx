@@ -22,7 +22,7 @@ export default function Labs() {
          </li>
          <li>
           <a
-            href="https://github.com/DiegoCico/CS4550/tree/main/A2/kanbas-next-app"
+            href="https://github.com/DiegoCico/CS4550/tree/main/A6"
             target="_blank"
             rel="noopener noreferrer"
           >

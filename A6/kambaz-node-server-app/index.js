@@ -14,7 +14,9 @@ import AssignmentsRoutes from "./Kambaz/Assignments/routes.js";
 import EnrollmentsRoutes from "./Kambaz/Enrollments/routes.js";
 import mongoose from "mongoose";
 
-const CONNECTION_STRING = process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/kambaz"
+const CONNECTION_STRING =
+  process.env.DATABASE_CONNECTION_STRING ||
+  "mongodb://127.0.0.1:27017/kambaz";
 mongoose.connect(CONNECTION_STRING);
 
 mongoose.connection.on("connected", () => {
@@ -24,6 +26,7 @@ mongoose.connection.on("connected", () => {
 mongoose.connection.on("error", (err) => {
   console.error("MongoDB connection error:", err);
 });
+
 const app = express();
 
 app.use(
@@ -39,18 +42,20 @@ const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false,
+  },
 };
 
-if (process.env.SERVER_ENV !== "development") {
+if (process.env.SERVER_ENV === "production") {
   sessionOptions.proxy = true;
-  sessionOptions.cookie = {
-    sameSite: "none",
-    secure: true,
-    domain: process.env.SERVER_URL,
-  };
+  sessionOptions.cookie.sameSite = "none";
+  sessionOptions.cookie.secure = true;
 }
 
-app.use(session(sessionOptions)); 
+app.use(session(sessionOptions));
 
 Hello(app);
 Lab5(app);
@@ -64,4 +69,3 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
