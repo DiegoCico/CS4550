@@ -75,7 +75,7 @@ export default function TOC() {
 
       <NavItem>
         <NavLink
-          href="https://github.com/DiegoCico/CS4550/tree/main/A5"
+          href="https://github.com/DiegoCico/CS4550/tree/main/A6"
           target="_blank"
           rel="noopener noreferrer"
         >
