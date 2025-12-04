@@ -42,13 +42,12 @@ export default function UserRoutes(app, db) {
   };
 
   const signout = (req, res) => { 
-    req.session.destroy();
-        const currentUser = req.session["currentUser"];
+    const currentUser = req.session["currentUser"];
     if (!currentUser) {
       res.sendStatus(401);
       return;
     }
-
+    req.session.destroy();
     res.sendStatus(200);
   };
 const profile = (req, res) => {
@@ -68,5 +67,6 @@ const profile = (req, res) => {
   app.post("/api/users/signup", signup);
   app.post("/api/users/signin", signin);
   app.post("/api/users/signout", signout);
+  app.post("/api/users/profile", profile);
   app.get("/api/users/profile", profile);
 }
