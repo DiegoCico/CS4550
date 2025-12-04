@@ -25,9 +25,20 @@ export default function CourseRoutes(app, db) {
    const enrollmentsDao = EnrollmentsDao(db);
   const createCourse = (req, res) => {
     const currentUser = req.session["currentUser"];
-    const newCourse = dao.createCourse(req.body);
-    enrollmentsDao.enrollUserInCourse(currentUser._id, newCourse._id);
-    res.json(newCourse);
+    console.log("Creating course - Current user:", currentUser);
+    if (!currentUser) {
+      console.log("No user in session!");
+      res.sendStatus(401);
+      return;
+    }
+    try {
+      const newCourse = dao.createCourse(req.body);
+      enrollmentsDao.enrollUserInCourse(currentUser._id, newCourse._id);
+      res.json(newCourse);
+    } catch (error) {
+      console.error("Error creating course:", error);
+      res.status(500).json({ error: error.message });
+    }
   };
     const deleteCourse = (req, res) => {
     const { courseId } = req.params;
