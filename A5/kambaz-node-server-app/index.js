@@ -21,12 +21,14 @@ app.use(
   })
 );
 
-app.use(express.json());
-
 const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    sameSite: "lax",
+    secure: false,   
+  },
 };
 
 if (process.env.SERVER_ENV !== "development") {
@@ -34,11 +36,13 @@ if (process.env.SERVER_ENV !== "development") {
   sessionOptions.cookie = {
     sameSite: "none",
     secure: true,
-    domain: ".onrender.com",  
+    // domain: process.env.SERVER_URL,
   };
 }
+console.log(sessionOptions);
 
 app.use(session(sessionOptions)); 
+app.use(express.json());
 
 Hello(app);
 Lab5(app);

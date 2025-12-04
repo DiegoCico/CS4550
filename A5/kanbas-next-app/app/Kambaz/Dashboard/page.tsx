@@ -139,9 +139,9 @@ const handleUnenroll = async (courseId: string) => {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem("currentUser");
-    dispatch(setCurrentUser(null));
-    router.push("/Kambaz/Account/Signin");
+    // localStorage.removeItem("currentUser");
+    // dispatch(setCurrentUser(null));
+    // router.push("/Kambaz/Account/Signin");
   };
 
   return (
