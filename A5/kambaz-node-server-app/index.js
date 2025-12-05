@@ -27,7 +27,9 @@ const sessionOptions = {
   saveUninitialized: false,
   cookie: {
     sameSite: "lax",
-    secure: false,   
+    secure: false,
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },
 };
 
@@ -36,13 +38,26 @@ if (process.env.SERVER_ENV !== "development") {
   sessionOptions.cookie = {
     sameSite: "none",
     secure: true,
-    // domain: process.env.SERVER_URL,
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
   };
 }
-console.log(sessionOptions);
+console.log("Session options:", sessionOptions);
+console.log("Environment:", process.env.SERVER_ENV);
+console.log("Client URL:", process.env.CLIENT_URL);
 
 app.use(session(sessionOptions)); 
 app.use(express.json());
+
+// Test endpoint to check session
+app.get("/api/test/session", (req, res) => {
+  res.json({
+    hasSession: !!req.session,
+    hasUser: !!req.session?.currentUser,
+    user: req.session?.currentUser || null,
+    sessionID: req.sessionID,
+  });
+});
 
 Hello(app);
 Lab5(app);
