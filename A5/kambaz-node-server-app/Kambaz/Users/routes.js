@@ -18,23 +18,36 @@ export default function UserRoutes(app, db) {
     res.json(updatedUser);
   };
   const signup = (req, res) => {
-        const user = dao.findUserByUsername(req.body.username);
+    const user = dao.findUserByUsername(req.body.username);
     if (user) {
-      res.status(400).json(
-        { message: "Username already in use" });
+      res.status(400).json({ message: "Username already in use" });
       return;
     }
     const currentUser = dao.createUser(req.body);
-    req.session["currentUser"] = currentUser;
-    res.json(currentUser);
-
+    req.session.currentUser = currentUser;
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ message: "Session save failed" });
+      }
+      console.log("User signed up:", currentUser.username);
+      res.json(currentUser);
+    });
   };
     const signin = (req, res) => {
     const { username, password } = req.body;
     const currentUser = dao.findUserByCredentials(username, password);
-        if (currentUser) {
-      req.session["currentUser"] = currentUser;
-          res.json(currentUser);
+    if (currentUser) {
+      req.session.currentUser = currentUser;
+      req.session.save((err) => {
+        if (err) {
+          console.error("Session save error:", err);
+          return res.status(500).json({ message: "Session save failed" });
+        }
+        console.log("User signed in:", currentUser.username);
+        console.log("Session saved with ID:", req.sessionID);
+        res.json(currentUser);
+      });
     } else {
       res.status(401).json({ message: "Unable to login. Try again later." });
     }

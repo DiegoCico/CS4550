@@ -14,10 +14,13 @@ import AssignmentsRoutes from "./Kambaz/Assignments/routes.js";
 import EnrollmentsRoutes from "./Kambaz/Enrollments/routes.js";
 const app = express();
 
+// CORS must be configured before session
 app.use(
   cors({
     credentials: true,
     origin: process.env.CLIENT_URL || "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -48,6 +51,16 @@ console.log("Client URL:", process.env.CLIENT_URL);
 
 app.use(session(sessionOptions)); 
 app.use(express.json());
+
+// Debug middleware to log session info
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  console.log("Session ID:", req.sessionID);
+  console.log("Has session:", !!req.session);
+  console.log("Current user:", req.session?.currentUser?.username || "none");
+  console.log("---");
+  next();
+});
 
 // Test endpoint to check session
 app.get("/api/test/session", (req, res) => {
