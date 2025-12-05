@@ -14,6 +14,10 @@ import AssignmentsRoutes from "./Kambaz/Assignments/routes.js";
 import EnrollmentsRoutes from "./Kambaz/Enrollments/routes.js";
 const app = express();
 
+if (process.env.SERVER_ENV === "production") {
+  app.set("trust proxy", 1);
+}
+
 // CORS must be configured before session
 app.use(
   cors({
@@ -28,6 +32,7 @@ const sessionOptions = {
   secret: process.env.SESSION_SECRET || "kambaz",
   resave: false,
   saveUninitialized: false,
+  name: "connect.sid", // Explicit session cookie name
   cookie: {
     sameSite: "lax",
     secure: false,
@@ -36,13 +41,14 @@ const sessionOptions = {
   },
 };
 
-if (process.env.SERVER_ENV !== "development") {
+if (process.env.SERVER_ENV === "production") {
   sessionOptions.proxy = true;
   sessionOptions.cookie = {
     sameSite: "none",
     secure: true,
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    path: "/",
   };
 }
 console.log("Session options:", sessionOptions);
@@ -55,6 +61,7 @@ app.use(express.json());
 // Debug middleware to log session info
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
+  console.log("Cookies:", req.headers.cookie || "none");
   console.log("Session ID:", req.sessionID);
   console.log("Has session:", !!req.session);
   console.log("Current user:", req.session?.currentUser?.username || "none");
