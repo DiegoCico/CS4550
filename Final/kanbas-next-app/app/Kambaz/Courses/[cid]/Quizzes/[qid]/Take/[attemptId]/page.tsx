@@ -11,7 +11,10 @@ import {
 import { useSelector } from "react-redux";
 
 export default function TakeQuizPage() {
-  const { cid, qid, attemptId } = useParams();
+  const params = useParams();
+  const cid = Array.isArray(params.cid) ? params.cid[0] : params.cid;
+  const qid = Array.isArray(params.qid) ? params.qid[0] : params.qid;
+  const attemptId = Array.isArray(params.attemptId) ? params.attemptId[0] : params.attemptId;
   const router = useRouter();
 
   const currentUser = useSelector((state: any) => state.account.currentUser);
