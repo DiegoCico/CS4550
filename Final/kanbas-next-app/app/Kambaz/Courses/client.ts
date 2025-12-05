@@ -99,6 +99,13 @@ export const createQuestionForQuiz = async (quizId: string, question: any) => {
   return data;
 };
 
+export const findQuestionById = async (questionId: string) => {
+  const { data } = await axiosWithCredentials.get(
+    `${QUESTIONS_API}/${questionId}`
+  );
+  return data;
+};
+
 export const updateQuestion = async (questionId: string, updates: any) => {
   const { data } = await axiosWithCredentials.put(
     `${QUESTIONS_API}/${questionId}`,
