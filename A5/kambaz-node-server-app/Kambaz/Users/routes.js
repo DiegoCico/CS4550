@@ -14,8 +14,14 @@ export default function UserRoutes(app, db) {
     const userUpdates = req.body;
     const updatedUser = { ...dao.findUserById(userId), ...userUpdates };
     dao.updateUser(userId, updatedUser);
-    req.session["currentUser"] = updatedUser;
-    res.json(updatedUser);
+    req.session.currentUser = updatedUser;
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).json({ message: "Session save failed" });
+      }
+      res.json(updatedUser);
+    });
   };
   const signup = (req, res) => {
     const user = dao.findUserByUsername(req.body.username);
@@ -54,16 +60,22 @@ export default function UserRoutes(app, db) {
   };
 
   const signout = (req, res) => { 
-    const currentUser = req.session["currentUser"];
+    const currentUser = req.session.currentUser;
     if (!currentUser) {
       res.sendStatus(401);
       return;
     }
-    req.session.destroy();
-    res.sendStatus(200);
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Session destroy error:", err);
+        return res.status(500).json({ message: "Signout failed" });
+      }
+      res.sendStatus(200);
+    });
   };
 const profile = (req, res) => {
-  const currentUser = req.session["currentUser"];
+  const currentUser = req.session.currentUser;
+  console.log("Profile request - Current user:", currentUser);
   if (!currentUser) {
     res.sendStatus(401);
     return;
