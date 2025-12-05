@@ -28,7 +28,7 @@ const ICONS = {
 } as const;
 
 export default function KambazNavigation() {
-    const { currentUser } = useSelector((state: any) => state.accountReducer);
+    const { currentUser } = useSelector((state: any) => state.account);
   const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
   const pathname = usePathname();
 

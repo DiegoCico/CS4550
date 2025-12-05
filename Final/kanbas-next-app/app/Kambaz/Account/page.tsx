@@ -4,7 +4,7 @@ import { redirect } from "next/dist/client/components/navigation";
 
 
 export default function AccountPage() {
- const { currentUser } = useSelector((state: any) => state.accountReducer);
+ const { currentUser } = useSelector((state: any) => state.account);
  if (!currentUser) {
    redirect("/Kambaz/Account/Signin");
  } else {

@@ -25,7 +25,7 @@ export default function Modules() {
   const courseId = Array.isArray(cid) ? cid[0] : cid;
   const [moduleName, setModuleName] = useState("");
 
-  const modules = useSelector((state: any) => state.modulesReducer.modules);
+  const modules = useSelector((state: any) => state.modules.modules);
   const dispatch = useDispatch();
 
  const onUpdateModule = async (module: any) => {

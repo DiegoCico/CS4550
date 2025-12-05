@@ -32,7 +32,7 @@ export default function Assignments() {
   const dispatch = useDispatch();
 
   const courseId = Array.isArray(cid) ? cid[0] : cid;
-  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const { assignments } = useSelector((state: any) => state.assignments);
 
   // Load from SERVER on page load
   useEffect(() => {

@@ -22,7 +22,7 @@ export default function AssignmentEditor() {
 
   const router = useRouter();
   const dispatch = useDispatch();
-  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const { assignments } = useSelector((state: any) => state.assignments);
 
   const existing = assignments.find(
     (a: any) => a._id === assignmentId && a.course === courseId

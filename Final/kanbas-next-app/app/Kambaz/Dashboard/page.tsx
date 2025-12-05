@@ -39,10 +39,10 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { courses } = useSelector((state: any) => state.coursesReducer);
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { courses } = useSelector((state: any) => state.courses);
+  const { currentUser } = useSelector((state: any) => state.account);
   const { showAllCourses, enrollments } = useSelector(
-    (state: any) => state.enrollmentsReducer
+    (state: any) => state.enrollments
   );
 
 const fetchCourses = async () => {

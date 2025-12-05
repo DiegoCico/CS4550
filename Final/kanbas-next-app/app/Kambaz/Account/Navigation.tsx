@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { usePathname } from "next/navigation";
 
 export default function AccountNavigation() {
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser } = useSelector((state: any) => state.account);
   const pathname = usePathname();
 
   return (

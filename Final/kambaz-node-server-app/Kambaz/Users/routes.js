@@ -65,13 +65,12 @@ const deleteUser = async (req, res) => {
   };
 
   const signout = (req, res) => { 
-    req.session.destroy();
-        const currentUser =  req.session["currentUser"];
+    const currentUser = req.session["currentUser"];
     if (!currentUser) {
       res.sendStatus(401);
       return;
     }
-
+    req.session.destroy();
     res.sendStatus(200);
   };
 const profile = (req, res) => {

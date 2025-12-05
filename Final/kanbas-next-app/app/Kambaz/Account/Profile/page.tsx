@@ -14,7 +14,7 @@ export default function Profile() {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const { currentUser } = useSelector((state: any) => state.account);
     const updateProfile = async () => {
     const updatedProfile = await client.updateUser(profile);
     dispatch(setCurrentUser(updatedProfile));

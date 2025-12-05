@@ -12,6 +12,9 @@ import CourseRoutes from "./Kambaz/Courses/routes.js";
 import ModulesRoutes from "./Kambaz/Modules/routes.js";
 import AssignmentsRoutes from "./Kambaz/Assignments/routes.js";
 import EnrollmentsRoutes from "./Kambaz/Enrollments/routes.js";
+import QuizzesRoutes from "./Kambaz/Quizzes/routes.js";
+import QuestionsRoutes from "./Kambaz/Questions/routes.js";
+import QuizAttemptsRoutes from "./Kambaz/QuizAttempts/routes.js";
 import mongoose from "mongoose";
 
 const CONNECTION_STRING =
@@ -64,6 +67,9 @@ CourseRoutes(app, db);
 ModulesRoutes(app, db);
 AssignmentsRoutes(app, db);
 EnrollmentsRoutes(app, db);
+QuizzesRoutes(app);
+QuestionsRoutes(app);
+QuizAttemptsRoutes(app);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

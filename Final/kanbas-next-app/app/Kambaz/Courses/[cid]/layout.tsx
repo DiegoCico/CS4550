@@ -8,7 +8,7 @@ export default function CoursesLayout({ children }: { children: ReactNode }) {
  const params = useParams();
  const rawCid = params?.cid;
  const cid = Array.isArray(rawCid) ? rawCid[0] : (rawCid ?? "");
- const { courses } = useSelector((state: any) => state.coursesReducer);
+ const { courses } = useSelector((state: any) => state.courses);
  const course = courses.find((course: any) => course._id === cid);
  return (
    <div id="wd-courses">
