@@ -42,10 +42,10 @@ export default function ReviewAttemptPage() {
   return (
     <div className="p-6 max-w-4xl flex flex-col gap-6">
 
-      <h1 className="text-3xl font-semibold">Attempt Review</h1>
+      <h1 className="text-3xl font-semibold text-red ">Attempt Review</h1>
 
       <div className="border rounded p-4 bg-gray-50">
-        <p><strong>Score:</strong> {attempt.score} / {attempt.totalPoints}</p>
+        <p><strong>Score: </strong> {attempt.score} / {attempt.totalPoints}</p>
         <p><strong>Submitted:</strong> {new Date(attempt.submittedAt).toLocaleString()}</p>
       </div>
 
@@ -54,7 +54,7 @@ export default function ReviewAttemptPage() {
           const studentAns = attempt.answers.find((a: any) => a.question === q._id);
 
           return (
-            <div key={q._id} className="border rounded p-4">
+            <div key={q._id} className="border rounded p-4 bg-transparent">
               <h2 className="text-xl font-semibold mb-2">
                 Question {i + 1}
               </h2>

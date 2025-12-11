@@ -21,16 +21,12 @@ export default function NewQuestionPage() {
     caseSensitive: false,
   });
 
-  // -------------------------
-  // Handlers
-  // -------------------------
   const handleCreate = async () => {
     if (!question.title.trim()) {
       alert("Please enter a question title");
       return;
     }
 
-    // Validate based on type
     if (question.type === "MULTIPLE_CHOICE") {
       const hasCorrect = question.choices.some((c: any) => c.isCorrect);
       if (!hasCorrect) {
@@ -211,9 +207,6 @@ export default function NewQuestionPage() {
         </div>
       )}
 
-      {/* ------------------------- */}
-      {/* ACTION BUTTONS */}
-      {/* ------------------------- */}
       <div className="flex gap-3">
         <button
           onClick={handleCreate}

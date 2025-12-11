@@ -132,8 +132,8 @@ export default function QuizDetailPage() {
             }
             className={`px-4 py-2 rounded text-white ${
               !quiz.published || !available || !open || exhausted
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-danger cursor-not-allowed"
+                : "bg-black hover:bg-blue-700"
             }`}
           >
             Start Quiz
@@ -145,7 +145,7 @@ export default function QuizDetailPage() {
               <p>Score: {latestAttempt.score}/{latestAttempt.totalPoints}</p>
 
               <button
-                className="mt-2 px-3 py-1 bg-gray-800 text-white rounded"
+                className="mt-2 px-3 py-1 bg-black text-white rounded"
                 onClick={() =>
                   router.push(
                     `/Kambaz/Courses/${cid}/Quizzes/${qid}/Attempts/${latestAttempt._id}/review`

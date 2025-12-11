@@ -8,7 +8,6 @@ export default function TakeRedirectPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect back to quiz detail page
     router.push(`/Kambaz/Courses/${cid}/Quizzes/${qid}`);
   }, [cid, qid, router]);
 
