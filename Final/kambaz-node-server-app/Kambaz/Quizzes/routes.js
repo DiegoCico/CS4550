@@ -22,50 +22,35 @@ export default function QuizzesRoutes(app) {
     next();
   };
 
-  // ---------------------------------------------------------
-  // Canvas-style visibility filter for STUDENTS
-  // ---------------------------------------------------------
   function filterQuizzesForStudent(quizList) {
     const now = new Date();
 
     return quizList.filter(q => {
-      // Must be published
       if (!q.published) return false;
 
-      // Must be past availableDate (if set)
-      if (q.availableDate && now < q.availableDate) return false;
+      if (q.availableDate && now < new Date(q.availableDate)) return false;
 
-      // Must not be past untilDate (if set)
-      if (q.untilDate && now > q.untilDate) return false;
+      if (q.untilDate && now > new Date(q.untilDate)) return false;
 
       return true;
     });
   }
 
-  // ---------------------------------------------------------
-  // GET all quizzes for a course
-  // ---------------------------------------------------------
   const findQuizzesForCourse = async (req, res) => {
     const { courseId } = req.params;
     const currentUser = req.session["currentUser"];
 
     let quizzes = await dao.findQuizzesForCourse(courseId);
 
-    // Faculty sees everything
     if (currentUser?.role === "FACULTY") {
       return res.json(quizzes);
     }
 
-    // Students require full Canvas visibility filtering
     quizzes = filterQuizzesForStudent(quizzes);
 
     res.json(quizzes);
   };
 
-  // ---------------------------------------------------------
-  // GET one quiz by ID
-  // Students must not access hidden or unavailable quizzes
-  // ---------------------------------------------------------
   const findQuizById = async (req, res) => {
     const { quizId } = req.params;
     const currentUser = req.session["currentUser"];
@@ -75,12 +60,10 @@ export default function QuizzesRoutes(app) {
       return res.status(404).json({ message: "Quiz not found" });
     }
 
-    // Faculty always has access
     if (currentUser?.role === "FACULTY") {
       return res.json(quiz);
     }
 
-    // Students must pass ALL visibility rules
     const now = new Date();
 
     if (!quiz.published) {
@@ -90,14 +73,14 @@ export default function QuizzesRoutes(app) {
       });
     }
 
-    if (quiz.availableDate && now < quiz.availableDate) {
+    if (quiz.availableDate && now < new Date(quiz.availableDate)) {
       return res.status(403).json({
         message: `Quiz is not available until ${quiz.availableDate}`,
         code: "NOT_AVAILABLE_YET"
       });
     }
 
-    if (quiz.untilDate && now > quiz.untilDate) {
+    if (quiz.untilDate && now > new Date(quiz.untilDate)) {
       return res.status(403).json({
         message: `Quiz closed on ${quiz.untilDate}`,
         code: "QUIZ_CLOSED"
@@ -107,9 +90,6 @@ export default function QuizzesRoutes(app) {
     return res.json(quiz);
   };
 
-  // ---------------------------------------------------------
-  // Faculty-only CRUD operations
-  // ---------------------------------------------------------
   const createQuizForCourse = async (req, res) => {
     const { courseId } = req.params;
     const quiz = { ...req.body, course: courseId };
@@ -142,9 +122,6 @@ export default function QuizzesRoutes(app) {
     res.json(status);
   };
 
-  // ---------------------------------------------------------
-  // ROUTES
-  // ---------------------------------------------------------
   app.get("/api/courses/:courseId/quizzes", requireAuth, findQuizzesForCourse);
   app.get("/api/quizzes/:quizId", requireAuth, findQuizById);
 

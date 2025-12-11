@@ -13,17 +13,14 @@ const questionSchema = new mongoose.Schema(
     points: { type: Number, default: 0 },
     question: String,
     
-    // For multiple choice
     choices: [{
       _id: String,
       text: String,
       isCorrect: Boolean
     }],
     
-    // For true/false
     correctAnswer: Boolean,
     
-    // For fill in blank
     possibleAnswers: [String],
     caseSensitive: { type: Boolean, default: false },
     

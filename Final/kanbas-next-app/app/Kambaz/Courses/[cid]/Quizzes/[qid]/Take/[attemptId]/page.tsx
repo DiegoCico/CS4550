@@ -52,18 +52,13 @@ export default function TakeQuizPage() {
     }, 1000);
   };
 
-  // -----------------------------
-  // INITIAL LOAD
-  // -----------------------------
   useEffect(() => {
     const load = async () => {
       const q = await findQuizById(qid as string);
       setQuiz(q);
 
-      // Start timer only once
       if (q.timeLimit && q.timeLimit > 0) startTimer(q.timeLimit);
 
-      // Ask backend what mode we are in
       const result = await getNextQuestion(qid as string, attemptId as string);
 
       if (result.mode === "FULL") {
@@ -87,9 +82,6 @@ export default function TakeQuizPage() {
   if (!currentUser || currentUser.role !== "STUDENT")
     return <div className="p-6 text-red-600">Unauthorized</div>;
 
-  // -----------------------------
-  // HANDLE FULL PAGE ANSWERS
-  // -----------------------------
   const updateAnswer = (qid: string, value: any) => {
     setAnswers({ ...answers, [qid]: value });
   };
@@ -114,9 +106,6 @@ export default function TakeQuizPage() {
     }
   };
 
-  // -----------------------------
-  // HANDLE ONE QUESTION MODE
-  // -----------------------------
   const submitOne = async () => {
     if (!currentQuestion) return;
 
@@ -135,14 +124,12 @@ export default function TakeQuizPage() {
       });
 
       if (response.done) {
-        // Finished quiz
         router.push(
           `/Kambaz/Courses/${cid}/Quizzes/${qid}/Attempts/${attemptId}/review`
         );
         return;
       }
 
-      // Load next question
       setIndex(response.index);
       setCurrentQuestion(response.question);
       setAnswers({});
@@ -151,9 +138,6 @@ export default function TakeQuizPage() {
     }
   };
 
-  // -----------------------------
-  // RENDER QUESTION UI
-  // -----------------------------
   const renderQuestion = (q: any) => {
     if (!q) return null;
 
@@ -161,7 +145,6 @@ export default function TakeQuizPage() {
       <div className="border p-5 rounded bg-white shadow flex flex-col gap-4">
         <h2 className="text-xl font-semibold">{q.title}</h2>
 
-        {/* MUTLIPLE CHOICE */}
         {q.type === "MULTIPLE_CHOICE" && (
           <div className="flex flex-col gap-2">
             {q.choices.map((choice: any) => (
@@ -181,7 +164,6 @@ export default function TakeQuizPage() {
           </div>
         )}
 
-        {/* TRUE/FALSE */}
         {q.type === "TRUE_FALSE" && (
           <div className="flex flex-col gap-2">
             <label>
@@ -208,7 +190,6 @@ export default function TakeQuizPage() {
           </div>
         )}
 
-        {/* FILL IN BLANK */}
         {q.type === "FILL_IN_BLANK" && (
           <input
             type="text"
@@ -222,14 +203,11 @@ export default function TakeQuizPage() {
     );
   };
 
-  // -----------------------------
-  // RENDER UI
-  // -----------------------------
+
   return (
     <div className="p-6 max-w-3xl flex flex-col gap-6">
       <h1 className="text-3xl font-semibold">{quiz.title}</h1>
 
-      {/* TIMER */}
       {quiz.timeLimit > 0 && (
         <div className="text-red-600 text-lg font-semibold">
           Time Left: {Math.floor((timeLeft || 0) / 60)}:
@@ -237,7 +215,6 @@ export default function TakeQuizPage() {
         </div>
       )}
 
-      {/* ONE QUESTION MODE */}
       {mode === "ONE" && (
         <>
           {renderQuestion(currentQuestion)}
@@ -253,7 +230,6 @@ export default function TakeQuizPage() {
         </>
       )}
 
-      {/* FULL MODE */}
       {mode === "FULL" && (
         <>
           <div className="flex flex-col gap-6">

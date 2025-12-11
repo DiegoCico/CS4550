@@ -34,7 +34,6 @@ export default function EditQuizPage() {
     const load = async () => {
       const q = await findQuizById(qid as string);
       
-      // Convert dates to datetime-local format
       const formatDate = (date: any) => {
         if (!date) return "";
         const d = new Date(date);

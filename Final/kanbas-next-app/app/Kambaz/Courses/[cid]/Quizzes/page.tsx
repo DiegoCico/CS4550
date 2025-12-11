@@ -26,6 +26,8 @@ import {
 } from "react-icons/bs";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import GreenCheckmark from "../Modules/GreenCheckmark";
+import BackgroundColors from "../../../../Labs/Lab2/BackgroundColors";
+import { Yellowtail } from "next/font/google";
 
 export default function QuizzesPage() {
   const router = useRouter();
@@ -71,17 +73,6 @@ export default function QuizzesPage() {
   return (
     <div id="wd-quizzes">
       <div className="clearfix">
-        <div className="w-50 d-inline-block">
-          <InputGroup>
-            <InputGroup.Text className="bg-white">
-              <BsSearch />
-            </InputGroup.Text>
-            <Form.Control
-              id="wd-search-quiz"
-              placeholder="Search for Quizzes"
-            />
-          </InputGroup>
-        </div>
 
         {isFaculty && (
           <Button
@@ -120,7 +111,7 @@ export default function QuizzesPage() {
             {quizzes.map((quiz) => (
               <ListGroupItem
                 key={quiz._id}
-                className="p-3 ps-2 d-flex align-items-start justify-content-between"
+                className="p-3 ps-2 d-flex align-items-start justify-content-between" 
               >
                 <div className="d-flex align-items-start">
                   <BsGripVertical className="me-2 fs-3 text-secondary" />

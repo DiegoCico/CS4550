@@ -5,13 +5,9 @@ import QuizModel from "../Quizzes/model.js";
 export default function QuestionsRoutes(app) {
   const dao = QuestionsDao();
 
-  // ----------------------------------------------------
-  // Helper: Remove correct answers for students
-  // ----------------------------------------------------
   function sanitizeQuestion(q) {
     const clean = { ...q._doc };
 
-    // Remove MCQ correctness
     if (clean.choices) {
       clean.choices = clean.choices.map((c) => ({
         _id: c._id,
@@ -19,30 +15,20 @@ export default function QuestionsRoutes(app) {
       }));
     }
 
-    delete clean.correctAnswer;   // TRUE/FALSE
-    delete clean.possibleAnswers; // FILL-IN
+    delete clean.correctAnswer;  
+    delete clean.possibleAnswers; 
     delete clean.caseSensitive;
 
     return clean;
   }
 
-  // ----------------------------------------------------
-  // Helper: Enforce question visibility rules
-  // ----------------------------------------------------
   async function filterQuestionsForStudent(quiz, questions) {
     const now = new Date();
-
-    // 1. Quiz must be published
     if (!quiz.published) return [];
-
-    // 2. Quiz must be within availability window
     if (quiz.availableDate && now < quiz.availableDate) return [];
     if (quiz.untilDate && now > quiz.untilDate) return [];
 
-    // 3. One-question-at-a-time -> students CANNOT fetch all questions
-    if (quiz.oneQuestionAtATime) return null; // special signal
-
-    // 4. Sanitize correct answers unless allowed
+    if (quiz.oneQuestionAtATime) return null; 
     if (quiz.showCorrectAnswers === "IMMEDIATELY") {
       return questions;
     }
@@ -58,9 +44,6 @@ export default function QuestionsRoutes(app) {
     return questions.map((q) => sanitizeQuestion(q));
   }
 
-  // ----------------------------------------------------
-  // Helper: Recalculate total quiz points
-  // ----------------------------------------------------
   async function updateQuizTotalPoints(quizId) {
     const questions = await QuestionsModel.find({ quiz: quizId });
     const total = questions.reduce((sum, q) => sum + (q.points || 0), 0);
@@ -71,9 +54,6 @@ export default function QuestionsRoutes(app) {
     );
   }
 
-  // ----------------------------------------------------
-  // GET all questions for a quiz
-  // ----------------------------------------------------
   const findQuestionsForQuiz = async (req, res) => {
     const { quizId } = req.params;
     const currentUser = req.session?.currentUser;
@@ -83,15 +63,12 @@ export default function QuestionsRoutes(app) {
 
     const questions = await dao.findQuestionsForQuiz(quizId);
 
-    // Faculty always gets full questions
     if (!currentUser || currentUser.role === "FACULTY") {
       return res.json(questions);
     }
 
-    // STUDENT LOGIC
     const filtered = await filterQuestionsForStudent(quiz, questions);
 
-    // One-question-at-a-time → disallow list fetch
     if (filtered === null) {
       return res.status(403).json({
         code: "ONE_QUESTION_AT_A_TIME",
@@ -102,9 +79,6 @@ export default function QuestionsRoutes(app) {
     return res.json(filtered);
   };
 
-  // ----------------------------------------------------
-  // GET a single question (still must follow rules)
-  // ----------------------------------------------------
   const findQuestionById = async (req, res) => {
     const { questionId } = req.params;
     const question = await dao.findQuestionById(questionId);
@@ -116,12 +90,10 @@ export default function QuestionsRoutes(app) {
     const quiz = await QuizModel.findById(question.quiz);
     const currentUser = req.session?.currentUser;
 
-    // Faculty gets full detail
     if (!currentUser || currentUser.role === "FACULTY") {
       return res.json(question);
     }
 
-    // STUDENT visibility restrictions
     const filtered = await filterQuestionsForStudent(quiz, [question]);
 
     if (filtered === null) {
@@ -141,9 +113,6 @@ export default function QuestionsRoutes(app) {
     return res.json(filtered[0]);
   };
 
-  // ----------------------------------------------------
-  // CREATE a question
-  // ----------------------------------------------------
   const createQuestionForQuiz = async (req, res) => {
     const { quizId } = req.params;
     const question = { ...req.body, quiz: quizId };
@@ -155,9 +124,6 @@ export default function QuestionsRoutes(app) {
     res.json(newQuestion);
   };
 
-  // ----------------------------------------------------
-  // UPDATE a question
-  // ----------------------------------------------------
   const updateQuestion = async (req, res) => {
     const { questionId } = req.params;
     const updates = req.body;
@@ -174,9 +140,6 @@ export default function QuestionsRoutes(app) {
     res.json(status);
   };
 
-  // ----------------------------------------------------
-  // DELETE a question
-  // ----------------------------------------------------
   const deleteQuestion = async (req, res) => {
     const { questionId } = req.params;
 
@@ -192,9 +155,6 @@ export default function QuestionsRoutes(app) {
     res.json(status);
   };
 
-  // ----------------------------------------------------
-  // ROUTES
-  // ----------------------------------------------------
   app.get("/api/quizzes/:quizId/questions", findQuestionsForQuiz);
   app.post("/api/quizzes/:quizId/questions", createQuestionForQuiz);
   app.get("/api/questions/:questionId", findQuestionById);

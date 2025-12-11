@@ -18,7 +18,6 @@ export default function TakeQuizPage() {
   const [question, setQuestion] = useState<any>(null);
   const [answers, setAnswers] = useState<any[]>([]);
 
-  // Load first question
   const loadQuestion = async () => {
     const data = await getNextQuestion(qid as string, attemptId as string);
 
@@ -36,7 +35,6 @@ export default function TakeQuizPage() {
     loadQuestion();
   }, []);
 
-  // Answer handler
   const handleAnswer = async (value: any) => {
     const body = {
       questionId: question._id,
@@ -45,7 +43,6 @@ export default function TakeQuizPage() {
 
     const data = await answerOneQuestion(qid as string, attemptId as string, body);
 
-    // Store student's answer locally for final submission
     setAnswers((prev: any[]) => [...prev, body]);
 
     if (data.done) {
@@ -57,7 +54,6 @@ export default function TakeQuizPage() {
     setQuestion(data.question);
   };
 
-  // Final Submit
   const handleSubmit = async () => {
     const result = await submitAttempt(qid as string, {
       attemptId: attemptId as string,
@@ -90,7 +86,6 @@ export default function TakeQuizPage() {
         Question {index + 1}
       </h1>
 
-      {/* Renders different types */}
       {question.type === "MULTIPLE_CHOICE" && (
         <div className="flex flex-col gap-2">
           <p className="font-semibold">{question.title}</p>

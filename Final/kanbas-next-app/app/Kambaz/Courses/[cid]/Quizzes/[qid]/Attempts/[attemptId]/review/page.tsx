@@ -25,8 +25,6 @@ export default function ReviewAttemptPage() {
     const att = await getAttemptById(attemptId as string);
     setAttempt(att);
 
-    // Student → backend already sanitizes questions
-    // Faculty → sees full questions
     const qs = await getQuestionsForAttemptReview(qid as string);
     setQuestions(qs);
 
@@ -63,17 +61,11 @@ export default function ReviewAttemptPage() {
 
               <p className="font-medium mb-2">{q.title}</p>
 
-              {/* ---------------------- */}
-              {/* STUDENT ANSWER */}
-              {/* ---------------------- */}
               <p>
                 <strong>Your Answer:</strong>{" "}
                 {renderAnswer(q, studentAns?.answer)}
               </p>
 
-              {/* ---------------------- */}
-              {/* CORRECT ANSWER? depends on rules */}
-              {/* ---------------------- */}
               {renderCorrectnessBlock(q, quiz, currentUser, studentAns)}
             </div>
           );
@@ -82,10 +74,6 @@ export default function ReviewAttemptPage() {
     </div>
   );
 }
-
-/* --------------------- */
-/*   UI Helper Logic     */
-/* --------------------- */
 
 function renderAnswer(q: any, answer: any) {
   if (q.type === "MULTIPLE_CHOICE") {
@@ -101,7 +89,6 @@ function renderAnswer(q: any, answer: any) {
 }
 
 function renderCorrectnessBlock(q: any, quiz: any, user: any, studentAns: any) {
-  // Faculty always sees correct answers
   if (user.role === "FACULTY") {
     return (
       <div className="mt-2 text-green-700">

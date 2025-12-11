@@ -6,9 +6,6 @@ import model from "./model.js";
 export default function QuizAttemptsRoutes(app) {
   const dao = QuizAttemptsDao();
 
-  // ----------------------------------------------------
-  // Return ALL attempts for the current user
-  // ----------------------------------------------------
 const findAttemptsForQuiz = async (req, res) => {
   const { quizId } = req.params;
   const sessionUser = req.session?.currentUser;
@@ -24,43 +21,34 @@ const findAttemptsForQuiz = async (req, res) => {
 
   function sanitizeQuestionsForStudent(quiz, questions) {
   const now = new Date();
-
-  // Faculty always gets full data
-  // This method is only called for students
   if (quiz.showCorrectAnswers === "IMMEDIATELY") {
-    return questions; // no filtering
+    return questions; 
   }
 
   if (quiz.showCorrectAnswers === "AFTER_DUE_DATE") {
     if (quiz.dueDate && now > quiz.dueDate) {
-      return questions; // due date passed, show correct answers
+      return questions; 
     }
   }
 
-  // NEVER show correct answers (or until due date not reached)
   return questions.map(q => {
-    const clean = { ...q._doc }; // clone document safely
+    const clean = { ...q._doc }; 
 
     if (clean.choices) {
       clean.choices = clean.choices.map(c => ({
         _id: c._id,
         text: c.text,
-        // REMOVE isCorrect flag
       }));
     }
 
-    delete clean.correctAnswer;       // True/False correct value
-    delete clean.possibleAnswers;     // Fill-in answers
+    delete clean.correctAnswer;      
+    delete clean.possibleAnswers;     
     delete clean.caseSensitive;       
 
     return clean;
   });
 }
 
-
-  // ----------------------------------------------------
-  // Return latest attempt for the current user
-  // ----------------------------------------------------
  const findLatestAttempt = async (req, res) => {
   const { quizId } = req.params;
   const sessionUser = req.session?.currentUser;
@@ -71,16 +59,12 @@ const findAttemptsForQuiz = async (req, res) => {
 
   const attempt = await dao.findLatestAttempt(quizId, sessionUser._id);
   if (!attempt) {
-    return res.status(404).json({ message: "No attempts found" });
+    return res.json(null);
   }
 
   res.json(attempt);
 };
 
-
-  // ----------------------------------------------------
-  // AUTOGRADING LOGIC
-  // ----------------------------------------------------
   function gradeAttempt(answers, questions) {
     let totalScore = 0;
     let totalPoints = 0;
@@ -119,95 +103,55 @@ const findAttemptsForQuiz = async (req, res) => {
     return { gradedAnswers, totalScore, totalPoints };
   }
 
-  // ----------------------------------------------------
-  // CREATE ATTEMPT WITH:
-  // - attempt limit enforcement
-  // - date availability enforcement
-  // - autograding
-  // ----------------------------------------------------
 const createAttempt = async (req, res) => {
   const { quizId } = req.params;
   const currentUser = req.session?.currentUser;
 
-  // Must be logged in
   if (!currentUser) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   const userId = currentUser._id;
   const { attemptId, answers, accessCode } = req.body;
-
-  // ---------------------------------------------
-  // LOAD QUIZ
-  // ---------------------------------------------
   const quiz = await QuizModel.findById(quizId);
   if (!quiz) {
     return res.status(404).json({ message: "Quiz not found" });
   }
-
-  // ---------------------------------------------
-  // LOAD ATTEMPT (required for time-limit)
-  // ---------------------------------------------
   const attempt = await dao.findAttemptById(attemptId);
   if (!attempt) {
     return res.status(404).json({ message: "Attempt not found" });
   }
 
-  // ---------------------------------------------
-  // ACCESS CODE CHECK (students only)
-  // ---------------------------------------------
-  if (quiz.accessCode && currentUser.role === "STUDENT") {
-    if (!accessCode || accessCode !== quiz.accessCode) {
-      return res.status(403).json({
-        message: "Invalid or missing access code",
-        code: "INVALID_ACCESS_CODE"
-      });
-    }
-  }
-
-  // ---------------------------------------------
-  // ATTEMPT LIMIT CHECK
-  // ---------------------------------------------
-  const attemptCount = await dao.countAttempts(quizId, userId);
-
-  // Students get **one attempt** unless multipleAttempts = true
-  if (!quiz.multipleAttempts && attemptCount >= 1) {
+  if (attempt.user !== userId) {
     return res.status(403).json({
-      message: "No more attempts allowed",
-      code: "ATTEMPTS_EXCEEDED"
+      message: "This attempt does not belong to you",
+      code: "FORBIDDEN"
     });
   }
 
-  // For multiple attempts, enforce howManyAttempts
-  if (quiz.multipleAttempts && attemptCount >= quiz.howManyAttempts) {
-    return res.status(403).json({
-      message: "Attempt limit reached",
-      code: "ATTEMPTS_EXCEEDED"
+  if (attempt.submittedAt) {
+    return res.status(400).json({
+      message: "This attempt has already been submitted",
+      code: "ALREADY_SUBMITTED"
     });
   }
 
-  // ---------------------------------------------
-  // AVAILABILITY WINDOW CHECK
-  // ---------------------------------------------
   const now = new Date();
 
-  if (quiz.availableDate && now < quiz.availableDate) {
+  if (quiz.availableDate && now < new Date(quiz.availableDate)) {
     return res.status(403).json({
       message: `Quiz is not available until ${quiz.availableDate}`,
       code: "NOT_AVAILABLE_YET"
     });
   }
 
-  if (quiz.untilDate && now > quiz.untilDate) {
+  if (quiz.untilDate && now > new Date(quiz.untilDate)) {
     return res.status(403).json({
       message: `Quiz is closed (was available until ${quiz.untilDate})`,
       code: "QUIZ_CLOSED"
     });
   }
 
-  // ---------------------------------------------
-  // TIME LIMIT CHECK
-  // ---------------------------------------------
   if (quiz.timeLimit && quiz.timeLimit > 0) {
     const allowedMs = quiz.timeLimit * 60 * 1000;
     const deadline = new Date(attempt.startedAt.getTime() + allowedMs);
@@ -220,9 +164,6 @@ const createAttempt = async (req, res) => {
     }
   }
 
-  // ---------------------------------------------
-  // LOAD QUESTIONS + AUTOGRADE
-  // ---------------------------------------------
   const questions = await QuestionsModel.find({ quiz: quizId });
 
   const {
@@ -231,9 +172,6 @@ const createAttempt = async (req, res) => {
     totalPoints
   } = gradeAttempt(answers, questions);
 
-  // ---------------------------------------------
-  // FINALIZE ATTEMPT
-  // ---------------------------------------------
   attempt.answers = gradedAnswers;
   attempt.score = totalScore;
   attempt.totalPoints = totalPoints;
@@ -241,9 +179,6 @@ const createAttempt = async (req, res) => {
 
   await attempt.save();
 
-  // ---------------------------------------------
-  // RETURN SUBMISSION RESULTS
-  // ---------------------------------------------
   res.json({
     message: "Attempt submitted successfully",
     attempt
@@ -256,12 +191,10 @@ const createAttempt = async (req, res) => {
   const { quizId } = req.params;
   const currentUser = req.session?.currentUser;
 
-  // Must be logged in
   if (!currentUser) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  // Must be faculty
   if (currentUser.role !== "FACULTY") {
     return res.status(403).json({
       message: "Only faculty can preview quizzes",
@@ -269,22 +202,18 @@ const createAttempt = async (req, res) => {
     });
   }
 
-  // Load quiz
   const quiz = await QuizModel.findById(quizId);
   if (!quiz) {
     return res.status(404).json({ message: "Quiz not found" });
   }
 
-  // Load questions
   const questions = await QuestionsModel.find({ quiz: quizId });
 
-  // Grade exactly like a real attempt
   const { gradedAnswers, totalScore, totalPoints } = gradeAttempt(
     req.body.answers,
     questions
   );
 
-  // RETURN ONLY — DO NOT SAVE TO DATABASE
   res.json({
     preview: true,
     score: totalScore,
@@ -307,7 +236,6 @@ const getNextQuestion = async (req, res) => {
     return res.status(404).json({ message: "Quiz not found" });
   }
 
-  // If quiz is NOT one-question-at-a-time, return all questions
   if (!quiz.oneQuestionAtATime) {
     const questions = await QuestionsModel.find({ quiz: quizId }).sort({ order: 1 });
     return res.json({ mode: "FULL", questions });
@@ -320,17 +248,18 @@ const getNextQuestion = async (req, res) => {
 
   const questions = await QuestionsModel.find({ quiz: quizId }).sort({ order: 1 });
 
-  // Define progress index
   const currentIndex = attempt.answers.length;
 
   if (currentIndex >= questions.length) {
     return res.json({
+      mode: "ONE",
       done: true,
       message: "Quiz complete"
     });
   }
 
   res.json({
+    mode: "ONE",
     done: false,
     index: currentIndex,
     question: questions[currentIndex]
@@ -356,9 +285,6 @@ const answerOneQuestion = async (req, res) => {
     return res.status(404).json({ message: "Attempt not found" });
   }
 
-  // ---------------------------
-  // TIME LIMIT CHECK
-  // ---------------------------
   if (quiz.timeLimit && quiz.timeLimit > 0) {
     const msLimit = quiz.timeLimit * 60 * 1000;
     const deadline = new Date(attempt.startedAt.getTime() + msLimit);
@@ -380,9 +306,6 @@ const answerOneQuestion = async (req, res) => {
     return res.status(400).json({ message: "Quiz already completed" });
   }
 
-  // ---------------------------
-  // LOCK QUESTIONS AFTER ANSWERING
-  // ---------------------------
   if (quiz.lockQuestionsAfterAnswering) {
     const alreadyAnswered = attempt.answers.find(a => a.question === questionId);
     if (alreadyAnswered) {
@@ -393,9 +316,6 @@ const answerOneQuestion = async (req, res) => {
     }
   }
 
-  // ---------------------------
-  // ENFORCE QUESTION ORDER
-  // ---------------------------
   if (currentQuestion._id.toString() !== questionId) {
     return res.status(403).json({
       message: "Cannot answer out-of-order question",
@@ -404,9 +324,6 @@ const answerOneQuestion = async (req, res) => {
     });
   }
 
-  // ---------------------------
-  // GRADE ONE ANSWER
-  // ---------------------------
   const { gradedAnswers } = gradeAttempt(
     [{ question: questionId, answer }],
     [currentQuestion]
@@ -415,7 +332,6 @@ const answerOneQuestion = async (req, res) => {
   attempt.answers.push(gradedAnswers[0]);
   await attempt.save();
 
-  // Return next question or complete
   const nextIndex = attempt.answers.length;
 
   if (nextIndex >= questions.length) {
@@ -445,7 +361,6 @@ const startAttempt = async (req, res) => {
     return res.status(404).json({ message: "Quiz not found" });
   }
 
-  // Check access code if required (for students)
   if (quiz.accessCode && currentUser.role === "STUDENT") {
     const { accessCode } = req.body;
     if (!accessCode || accessCode !== quiz.accessCode) {
@@ -458,7 +373,6 @@ const startAttempt = async (req, res) => {
 
   const attemptCount = await dao.countAttempts(quizId, currentUser._id);
 
-  // Attempt limit logic (reuse from createAttempt)
   if (!quiz.multipleAttempts && attemptCount >= 1) {
     return res.status(403).json({ message: "No more attempts allowed" });
   }
@@ -467,7 +381,6 @@ const startAttempt = async (req, res) => {
     return res.status(403).json({ message: "Attempt limit reached" });
   }
 
-  // Create the attempt
   const attempt = await dao.createAttempt({
     quiz: quizId,
     user: currentUser._id,
@@ -489,19 +402,16 @@ const getAttemptById = async (req, res) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  // Load quiz
   const quiz = await QuizModel.findById(quizId);
   if (!quiz) {
     return res.status(404).json({ message: "Quiz not found" });
   }
 
-  // Load attempt
   const attempt = await dao.findAttemptById(attemptId);
   if (!attempt) {
     return res.status(404).json({ message: "Attempt not found" });
   }
 
-  // STUDENT cannot view someone else's attempt
   if (currentUser.role === "STUDENT" && attempt.user !== currentUser._id) {
     return res.status(403).json({
       message: "You cannot view another student's attempt",
@@ -509,10 +419,8 @@ const getAttemptById = async (req, res) => {
     });
   }
 
-  // Load questions
   const questions = await QuestionsModel.find({ quiz: quizId });
 
-  // Determine if we show correct answers
   const now = new Date();
   let returnedQuestions = questions;
 
@@ -522,12 +430,11 @@ const getAttemptById = async (req, res) => {
     }
 
     if (quiz.showCorrectAnswers === "AFTER_DUE_DATE") {
-      if (!quiz.dueDate || now < quiz.dueDate) {
+      if (!quiz.dueDate || now < new Date(quiz.dueDate)) {
         returnedQuestions = questions.map(sanitizeQuestionForStudent);
       }
     }
 
-    // IMMEDIATELY -> full data is fine
   }
 
   return res.json({
@@ -536,7 +443,6 @@ const getAttemptById = async (req, res) => {
   });
 };
 
-// helper used above
 function sanitizeQuestionForStudent(q) {
   const clean = { ...q._doc };
 
@@ -558,12 +464,10 @@ const getAllAttemptsForQuiz = async (req, res) => {
   const { quizId } = req.params;
   const currentUser = req.session?.currentUser;
 
-  // Must be logged in
   if (!currentUser) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  // Only faculty can access this
   if (currentUser.role !== "FACULTY") {
     return res.status(403).json({
       message: "Only faculty can view all attempts",
@@ -571,16 +475,14 @@ const getAllAttemptsForQuiz = async (req, res) => {
     });
   }
 
-  // Load quiz
   const quiz = await QuizModel.findById(quizId);
   if (!quiz) {
     return res.status(404).json({ message: "Quiz not found" });
   }
 
-  // Load ALL attempts for this quiz, sorted by student then attemptNumber
   const attempts = await model
     .find({ quiz: quizId })
-    .populate("user")   // <-- requires your schema to have user: String/ObjectId
+    .populate("user") 
     .sort({ user: 1, attemptNumber: 1 });
 
   return res.json({
@@ -599,24 +501,20 @@ const getAttemptStatus = async (req, res) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
-  // Load quiz
   const quiz = await QuizModel.findById(quizId);
   if (!quiz) {
     return res.status(404).json({ message: "Quiz not found" });
   }
 
-  // Load attempt
   const attempt = await dao.findAttemptById(attemptId);
   if (!attempt) {
     return res.status(404).json({ message: "Attempt not found" });
   }
 
-  // Students can ONLY see their own attempt status
   if (currentUser.role === "STUDENT" && attempt.user !== currentUser._id) {
     return res.status(403).json({ message: "Forbidden" });
   }
 
-  // If attempt already submitted
   if (attempt.submittedAt) {
     return res.json({
       inProgress: false,
@@ -626,18 +524,16 @@ const getAttemptStatus = async (req, res) => {
     });
   }
 
-  // No time limit → attempt always in progress until submitted
   if (!quiz.timeLimit || quiz.timeLimit <= 0) {
     return res.json({
       inProgress: true,
-      timeRemainingMs: null, // unlimited
+      timeRemainingMs: null, 
       submitted: false,
       expired: false,
       attemptId: attempt._id
     });
   }
 
-  // Time limit enforcement
   const limitMs = quiz.timeLimit * 60 * 1000;
   const deadline = new Date(attempt.startedAt.getTime() + limitMs);
   const now = new Date();
@@ -657,7 +553,6 @@ const getAttemptStatus = async (req, res) => {
     });
   }
 
-  // Still active
   res.json({
     inProgress: true,
     expired: false,
@@ -669,12 +564,6 @@ const getAttemptStatus = async (req, res) => {
   });
 };
 
-
-
-
-  // ----------------------------------------------------
-  // Get attempt by ID (alternative route for convenience)
-  // ----------------------------------------------------
   const getAttemptByIdDirect = async (req, res) => {
     const { attemptId } = req.params;
     const currentUser = req.session?.currentUser;
@@ -688,7 +577,6 @@ const getAttemptStatus = async (req, res) => {
       return res.status(404).json({ message: "Attempt not found" });
     }
 
-    // Students can only view their own attempts
     if (currentUser.role === "STUDENT" && attempt.user !== currentUser._id) {
       return res.status(403).json({ message: "Forbidden" });
     }
@@ -696,19 +584,17 @@ const getAttemptStatus = async (req, res) => {
     res.json(attempt);
   };
 
-  // ----------------------------------------------------
-  // ROUTES
-  // ----------------------------------------------------
+
   app.post("/api/quizzes/:quizId/start", startAttempt);
-  app.get("/api/quizzes/:quizId/attempts", findAttemptsForQuiz);
   app.get("/api/quizzes/:quizId/attempts/latest", findLatestAttempt);
-  app.post("/api/quizzes/:quizId/attempts", createAttempt);
-  app.post("/api/quizzes/:quizId/preview", previewQuiz);
+  app.get("/api/quizzes/:quizId/attempts/all", getAllAttemptsForQuiz);
   app.get("/api/quizzes/:quizId/attempts/:attemptId/next", getNextQuestion);
+  app.get("/api/quizzes/:quizId/attempts/:attemptId/status", getAttemptStatus);
   app.patch("/api/quizzes/:quizId/attempts/:attemptId/answer", answerOneQuestion);
   app.get("/api/quizzes/:quizId/attempts/:attemptId", getAttemptById);
-  app.get("/api/quizzes/:quizId/attempts/all", getAllAttemptsForQuiz);
-  app.get("/api/quizzes/:quizId/attempts/:attemptId/status", getAttemptStatus);
+  app.get("/api/quizzes/:quizId/attempts", findAttemptsForQuiz);
+  app.post("/api/quizzes/:quizId/attempts", createAttempt);
+  app.post("/api/quizzes/:quizId/preview", previewQuiz);
   app.get("/api/quiz-attempts/:attemptId", getAttemptByIdDirect);
 
 }

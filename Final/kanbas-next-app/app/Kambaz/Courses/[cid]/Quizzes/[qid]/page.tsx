@@ -49,9 +49,6 @@ export default function QuizDetailPage() {
   const available = !quiz.availableDate || now >= new Date(quiz.availableDate);
   const open = !quiz.untilDate || now <= new Date(quiz.untilDate);
 
-  // ------------------------------
-  // Attempt limit logic
-  // ------------------------------
   const attemptsUsed = attempts.length;
   const attemptsAllowed = quiz.multipleAttempts ? quiz.howManyAttempts : 1;
   const attemptsRemaining = attemptsAllowed - attemptsUsed;
@@ -78,7 +75,6 @@ export default function QuizDetailPage() {
         <p className="text-gray-700">{quiz.description}</p>
       )}
 
-      {/* QUIZ METADATA */}
       <div className="border p-4 rounded bg-gray-50 space-y-1">
         <p><strong>Points:</strong> {quiz.points}</p>
         <p><strong>Time Limit:</strong> {quiz.timeLimit || 0} minutes</p>
@@ -92,7 +88,6 @@ export default function QuizDetailPage() {
         )}
       </div>
 
-      {/* STUDENT VIEW */}
       {currentUser?.role === "STUDENT" && (
         <div className="flex flex-col gap-4">
 
@@ -144,7 +139,6 @@ export default function QuizDetailPage() {
             Start Quiz
           </button>
 
-          {/* Latest Attempt */}
           {latestAttempt && (
             <div className="border p-4 rounded mt-4">
               <h2 className="text-xl font-semibold">Your Latest Attempt</h2>
@@ -165,7 +159,6 @@ export default function QuizDetailPage() {
         </div>
       )}
 
-      {/* FACULTY VIEW */}
       {currentUser?.role === "FACULTY" && (
         <div className="flex flex-col gap-3">
           <button
