@@ -42,7 +42,7 @@ export default function ManageQuestionsPage() {
             `/Kambaz/Courses/${cid}/Quizzes/${qid}/Questions/new`
           )
         }
-        className="px-4 py-2 bg-blue-600 text-white rounded"
+        className="px-4 py-2 bg-blue-600 text-white rounded bg-danger"
       >
         Add New Question
       </button>
@@ -70,14 +70,14 @@ export default function ManageQuestionsPage() {
                     `/Kambaz/Courses/${cid}/Quizzes/${qid}/Questions/${q._id}`
                   )
                 }
-                className="px-3 py-1 bg-green-600 text-white rounded"
+                className="px-3 py-1 bg-green-600 text-white rounded bg-danger"
               >
                 Edit
               </button>
 
               <button
                 onClick={() => handleDelete(q._id)}
-                className="px-3 py-1 bg-red-600 text-white rounded"
+                className="px-3 py-1 bg-red-600 text-white rounded bg-danger"
               >
                 Delete
               </button>
@@ -87,7 +87,7 @@ export default function ManageQuestionsPage() {
       </div>
 
       <button
-        className="mt-6 px-4 py-2 bg-gray-700 text-white rounded"
+        className="mt-6 px-4 py-2 bg-gray-700 text-white rounded bg-danger"
         onClick={() =>
           router.push(`/Kambaz/Courses/${cid}/Quizzes/${qid}`)
         }

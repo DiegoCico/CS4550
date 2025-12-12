@@ -26,8 +26,6 @@ import {
 } from "react-icons/bs";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import GreenCheckmark from "../Modules/GreenCheckmark";
-import BackgroundColors from "../../../../Labs/Lab2/BackgroundColors";
-import { Yellowtail } from "next/font/google";
 
 export default function QuizzesPage() {
   const router = useRouter();

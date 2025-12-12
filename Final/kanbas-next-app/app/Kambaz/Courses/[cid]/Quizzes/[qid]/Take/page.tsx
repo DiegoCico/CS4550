@@ -13,7 +13,7 @@ export default function TakeRedirectPage() {
 
   return (
     <div className="p-6">
-      <p>Redirecting to quiz...</p>
+      <p>Sending to quiz</p>
     </div>
   );
 }

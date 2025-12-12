@@ -28,9 +28,6 @@ export default function TakeQuizPage() {
   const [answers, setAnswers] = useState<any>({});
   const [loading, setLoading] = useState(true);
 
-  // -----------------------------
-  // TIMER
-  // -----------------------------
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const timerRef = useRef<any>(null);
 
